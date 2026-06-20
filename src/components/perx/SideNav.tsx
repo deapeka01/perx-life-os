@@ -47,8 +47,11 @@ export function SideNav({ items, brand = "P" }: { items: SideNavItem[]; brand?: 
 export function MobileBottomNav({ items }: { items: SideNavItem[] }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/90 backdrop-blur-lg md:hidden">
-      <ul className="mx-auto flex max-w-md items-center justify-around px-2 py-2">
+    <nav
+      aria-label="Primary"
+      className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-border bg-card/95 backdrop-blur-lg md:hidden"
+    >
+      <ul className="mx-auto flex max-w-md items-center justify-around px-2 pb-2 pt-1.5">
         {items.slice(0, 5).map((item) => {
           const active = pathname === item.to || pathname.startsWith(item.to + "/");
           const Icon = item.icon;
@@ -56,12 +59,13 @@ export function MobileBottomNav({ items }: { items: SideNavItem[] }) {
             <li key={item.to}>
               <Link
                 to={item.to}
-                className={`flex min-w-[56px] flex-col items-center gap-1 rounded-xl px-2 py-1.5 text-[10px] font-bold uppercase tracking-wide transition ${
-                  active ? "text-coral" : "text-navy/50"
+                className={`flex min-h-[56px] min-w-[64px] flex-col items-center justify-center gap-1 rounded-2xl px-2 py-1.5 text-xs font-bold transition ${
+                  active ? "bg-coral/10 text-coral" : "text-navy/70 hover:bg-muted"
                 }`}
                 aria-label={item.label}
+                aria-current={active ? "page" : undefined}
               >
-                <Icon className="size-5" strokeWidth={2.2} />
+                <Icon className="size-6" strokeWidth={active ? 2.6 : 2.2} aria-hidden />
                 <span>{item.label}</span>
               </Link>
             </li>
