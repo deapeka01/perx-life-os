@@ -9,38 +9,132 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as EmployeeRouteImport } from './routes/employee'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EmployeeIndexRouteImport } from './routes/employee.index'
+import { Route as EmployeeTeamRouteImport } from './routes/employee.team'
+import { Route as EmployeeQuestsRouteImport } from './routes/employee.quests'
+import { Route as EmployeeProfileRouteImport } from './routes/employee.profile'
+import { Route as EmployeeDiscoverRouteImport } from './routes/employee.discover'
+import { Route as EmployeeConciergeRouteImport } from './routes/employee.concierge'
 
+const EmployeeRoute = EmployeeRouteImport.update({
+  id: '/employee',
+  path: '/employee',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmployeeIndexRoute = EmployeeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeTeamRoute = EmployeeTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeQuestsRoute = EmployeeQuestsRouteImport.update({
+  id: '/quests',
+  path: '/quests',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeProfileRoute = EmployeeProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeDiscoverRoute = EmployeeDiscoverRouteImport.update({
+  id: '/discover',
+  path: '/discover',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeConciergeRoute = EmployeeConciergeRouteImport.update({
+  id: '/concierge',
+  path: '/concierge',
+  getParentRoute: () => EmployeeRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/employee': typeof EmployeeRouteWithChildren
+  '/employee/concierge': typeof EmployeeConciergeRoute
+  '/employee/discover': typeof EmployeeDiscoverRoute
+  '/employee/profile': typeof EmployeeProfileRoute
+  '/employee/quests': typeof EmployeeQuestsRoute
+  '/employee/team': typeof EmployeeTeamRoute
+  '/employee/': typeof EmployeeIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/employee/concierge': typeof EmployeeConciergeRoute
+  '/employee/discover': typeof EmployeeDiscoverRoute
+  '/employee/profile': typeof EmployeeProfileRoute
+  '/employee/quests': typeof EmployeeQuestsRoute
+  '/employee/team': typeof EmployeeTeamRoute
+  '/employee': typeof EmployeeIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/employee': typeof EmployeeRouteWithChildren
+  '/employee/concierge': typeof EmployeeConciergeRoute
+  '/employee/discover': typeof EmployeeDiscoverRoute
+  '/employee/profile': typeof EmployeeProfileRoute
+  '/employee/quests': typeof EmployeeQuestsRoute
+  '/employee/team': typeof EmployeeTeamRoute
+  '/employee/': typeof EmployeeIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/employee'
+    | '/employee/concierge'
+    | '/employee/discover'
+    | '/employee/profile'
+    | '/employee/quests'
+    | '/employee/team'
+    | '/employee/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/employee/concierge'
+    | '/employee/discover'
+    | '/employee/profile'
+    | '/employee/quests'
+    | '/employee/team'
+    | '/employee'
+  id:
+    | '__root__'
+    | '/'
+    | '/employee'
+    | '/employee/concierge'
+    | '/employee/discover'
+    | '/employee/profile'
+    | '/employee/quests'
+    | '/employee/team'
+    | '/employee/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EmployeeRoute: typeof EmployeeRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/employee': {
+      id: '/employee'
+      path: '/employee'
+      fullPath: '/employee'
+      preLoaderRoute: typeof EmployeeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +142,76 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/employee/': {
+      id: '/employee/'
+      path: '/'
+      fullPath: '/employee/'
+      preLoaderRoute: typeof EmployeeIndexRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/team': {
+      id: '/employee/team'
+      path: '/team'
+      fullPath: '/employee/team'
+      preLoaderRoute: typeof EmployeeTeamRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/quests': {
+      id: '/employee/quests'
+      path: '/quests'
+      fullPath: '/employee/quests'
+      preLoaderRoute: typeof EmployeeQuestsRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/profile': {
+      id: '/employee/profile'
+      path: '/profile'
+      fullPath: '/employee/profile'
+      preLoaderRoute: typeof EmployeeProfileRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/discover': {
+      id: '/employee/discover'
+      path: '/discover'
+      fullPath: '/employee/discover'
+      preLoaderRoute: typeof EmployeeDiscoverRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/concierge': {
+      id: '/employee/concierge'
+      path: '/concierge'
+      fullPath: '/employee/concierge'
+      preLoaderRoute: typeof EmployeeConciergeRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
   }
 }
 
+interface EmployeeRouteChildren {
+  EmployeeConciergeRoute: typeof EmployeeConciergeRoute
+  EmployeeDiscoverRoute: typeof EmployeeDiscoverRoute
+  EmployeeProfileRoute: typeof EmployeeProfileRoute
+  EmployeeQuestsRoute: typeof EmployeeQuestsRoute
+  EmployeeTeamRoute: typeof EmployeeTeamRoute
+  EmployeeIndexRoute: typeof EmployeeIndexRoute
+}
+
+const EmployeeRouteChildren: EmployeeRouteChildren = {
+  EmployeeConciergeRoute: EmployeeConciergeRoute,
+  EmployeeDiscoverRoute: EmployeeDiscoverRoute,
+  EmployeeProfileRoute: EmployeeProfileRoute,
+  EmployeeQuestsRoute: EmployeeQuestsRoute,
+  EmployeeTeamRoute: EmployeeTeamRoute,
+  EmployeeIndexRoute: EmployeeIndexRoute,
+}
+
+const EmployeeRouteWithChildren = EmployeeRoute._addFileChildren(
+  EmployeeRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EmployeeRoute: EmployeeRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
