@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProviderRouteImport } from './routes/provider'
 import { Route as EmployeeRouteImport } from './routes/employee'
 import { Route as CompanyRouteImport } from './routes/company'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProviderIndexRouteImport } from './routes/provider.index'
 import { Route as EmployeeIndexRouteImport } from './routes/employee.index'
@@ -19,6 +20,9 @@ import { Route as CompanyIndexRouteImport } from './routes/company.index'
 import { Route as ProviderServicesRouteImport } from './routes/provider.services'
 import { Route as ProviderMarketingRouteImport } from './routes/provider.marketing'
 import { Route as ProviderDemandRouteImport } from './routes/provider.demand'
+import { Route as OnboardingProviderRouteImport } from './routes/onboarding.provider'
+import { Route as OnboardingEmployeeRouteImport } from './routes/onboarding.employee'
+import { Route as OnboardingCompanyRouteImport } from './routes/onboarding.company'
 import { Route as EmployeeTeamRouteImport } from './routes/employee.team'
 import { Route as EmployeeQuestsRouteImport } from './routes/employee.quests'
 import { Route as EmployeeProfileRouteImport } from './routes/employee.profile'
@@ -42,6 +46,11 @@ const EmployeeRoute = EmployeeRouteImport.update({
 const CompanyRoute = CompanyRouteImport.update({
   id: '/company',
   path: '/company',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -78,6 +87,21 @@ const ProviderDemandRoute = ProviderDemandRouteImport.update({
   id: '/demand',
   path: '/demand',
   getParentRoute: () => ProviderRoute,
+} as any)
+const OnboardingProviderRoute = OnboardingProviderRouteImport.update({
+  id: '/onboarding/provider',
+  path: '/onboarding/provider',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingEmployeeRoute = OnboardingEmployeeRouteImport.update({
+  id: '/onboarding/employee',
+  path: '/onboarding/employee',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingCompanyRoute = OnboardingCompanyRouteImport.update({
+  id: '/onboarding/company',
+  path: '/onboarding/company',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const EmployeeTeamRoute = EmployeeTeamRouteImport.update({
   id: '/team',
@@ -127,6 +151,7 @@ const ApiChatRoute = ApiChatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/company': typeof CompanyRouteWithChildren
   '/employee': typeof EmployeeRouteWithChildren
   '/provider': typeof ProviderRouteWithChildren
@@ -139,6 +164,9 @@ export interface FileRoutesByFullPath {
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/quests': typeof EmployeeQuestsRoute
   '/employee/team': typeof EmployeeTeamRoute
+  '/onboarding/company': typeof OnboardingCompanyRoute
+  '/onboarding/employee': typeof OnboardingEmployeeRoute
+  '/onboarding/provider': typeof OnboardingProviderRoute
   '/provider/demand': typeof ProviderDemandRoute
   '/provider/marketing': typeof ProviderMarketingRoute
   '/provider/services': typeof ProviderServicesRoute
@@ -148,6 +176,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/api/chat': typeof ApiChatRoute
   '/company/analytics': typeof CompanyAnalyticsRoute
   '/company/approvals': typeof CompanyApprovalsRoute
@@ -157,6 +186,9 @@ export interface FileRoutesByTo {
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/quests': typeof EmployeeQuestsRoute
   '/employee/team': typeof EmployeeTeamRoute
+  '/onboarding/company': typeof OnboardingCompanyRoute
+  '/onboarding/employee': typeof OnboardingEmployeeRoute
+  '/onboarding/provider': typeof OnboardingProviderRoute
   '/provider/demand': typeof ProviderDemandRoute
   '/provider/marketing': typeof ProviderMarketingRoute
   '/provider/services': typeof ProviderServicesRoute
@@ -167,6 +199,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/company': typeof CompanyRouteWithChildren
   '/employee': typeof EmployeeRouteWithChildren
   '/provider': typeof ProviderRouteWithChildren
@@ -179,6 +212,9 @@ export interface FileRoutesById {
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/quests': typeof EmployeeQuestsRoute
   '/employee/team': typeof EmployeeTeamRoute
+  '/onboarding/company': typeof OnboardingCompanyRoute
+  '/onboarding/employee': typeof OnboardingEmployeeRoute
+  '/onboarding/provider': typeof OnboardingProviderRoute
   '/provider/demand': typeof ProviderDemandRoute
   '/provider/marketing': typeof ProviderMarketingRoute
   '/provider/services': typeof ProviderServicesRoute
@@ -190,6 +226,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/company'
     | '/employee'
     | '/provider'
@@ -202,6 +239,9 @@ export interface FileRouteTypes {
     | '/employee/profile'
     | '/employee/quests'
     | '/employee/team'
+    | '/onboarding/company'
+    | '/onboarding/employee'
+    | '/onboarding/provider'
     | '/provider/demand'
     | '/provider/marketing'
     | '/provider/services'
@@ -211,6 +251,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/api/chat'
     | '/company/analytics'
     | '/company/approvals'
@@ -220,6 +261,9 @@ export interface FileRouteTypes {
     | '/employee/profile'
     | '/employee/quests'
     | '/employee/team'
+    | '/onboarding/company'
+    | '/onboarding/employee'
+    | '/onboarding/provider'
     | '/provider/demand'
     | '/provider/marketing'
     | '/provider/services'
@@ -229,6 +273,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/auth'
     | '/company'
     | '/employee'
     | '/provider'
@@ -241,6 +286,9 @@ export interface FileRouteTypes {
     | '/employee/profile'
     | '/employee/quests'
     | '/employee/team'
+    | '/onboarding/company'
+    | '/onboarding/employee'
+    | '/onboarding/provider'
     | '/provider/demand'
     | '/provider/marketing'
     | '/provider/services'
@@ -251,10 +299,14 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   CompanyRoute: typeof CompanyRouteWithChildren
   EmployeeRoute: typeof EmployeeRouteWithChildren
   ProviderRoute: typeof ProviderRouteWithChildren
   ApiChatRoute: typeof ApiChatRoute
+  OnboardingCompanyRoute: typeof OnboardingCompanyRoute
+  OnboardingEmployeeRoute: typeof OnboardingEmployeeRoute
+  OnboardingProviderRoute: typeof OnboardingProviderRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -278,6 +330,13 @@ declare module '@tanstack/react-router' {
       path: '/company'
       fullPath: '/company'
       preLoaderRoute: typeof CompanyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -328,6 +387,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/provider/demand'
       preLoaderRoute: typeof ProviderDemandRouteImport
       parentRoute: typeof ProviderRoute
+    }
+    '/onboarding/provider': {
+      id: '/onboarding/provider'
+      path: '/onboarding/provider'
+      fullPath: '/onboarding/provider'
+      preLoaderRoute: typeof OnboardingProviderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding/employee': {
+      id: '/onboarding/employee'
+      path: '/onboarding/employee'
+      fullPath: '/onboarding/employee'
+      preLoaderRoute: typeof OnboardingEmployeeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding/company': {
+      id: '/onboarding/company'
+      path: '/onboarding/company'
+      fullPath: '/onboarding/company'
+      preLoaderRoute: typeof OnboardingCompanyRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/employee/team': {
       id: '/employee/team'
@@ -454,10 +534,14 @@ const ProviderRouteWithChildren = ProviderRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   CompanyRoute: CompanyRouteWithChildren,
   EmployeeRoute: EmployeeRouteWithChildren,
   ProviderRoute: ProviderRouteWithChildren,
   ApiChatRoute: ApiChatRoute,
+  OnboardingCompanyRoute: OnboardingCompanyRoute,
+  OnboardingEmployeeRoute: OnboardingEmployeeRoute,
+  OnboardingProviderRoute: OnboardingProviderRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
