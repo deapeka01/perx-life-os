@@ -100,7 +100,7 @@
   --secondary: var(--navy-soft);
   --secondary-foreground: var(--navy);
   --muted: var(--navy-soft);
-  --muted-foreground: oklch(0.5 0.03 265);
+  --muted-foreground: oklch(0.38 0.03 265);
   --accent: var(--coral);
   --accent-foreground: oklch(0.99 0 0);
   --destructive: oklch(0.6 0.22 27);
@@ -147,6 +147,8 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.55;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -154,6 +156,16 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     letter-spacing: -0.01em;
+  }
+
+  /* Larger, easier-to-tap controls */
+  button, [role="button"], a {
+    -webkit-tap-highlight-color: transparent;
+  }
+  :focus-visible {
+    outline: 3px solid var(--coral);
+    outline-offset: 2px;
+    border-radius: 8px;
   }
 }
 
