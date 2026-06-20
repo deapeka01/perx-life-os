@@ -8,23 +8,42 @@ export const currentEmployee = {
   firstName: "Ardit",
   lastName: "Hoxha",
   email: "ardit.hoxha@digitsapiens.al",
-  greeting: "Mirëmëngjes",
   walletALL: 42500,
   monthlyAllowanceALL: 60000,
   company: "DigitSapiens",
   department: "Engineering",
-  dna: ["Explorer", "Learner", "Wellness Seeker"] as const,
-  goals: [
-    { id: "g1", label: "Run a half marathon", progress: 62, category: "fitness" },
-    { id: "g2", label: "Learn applied AI", progress: 38, category: "growth" },
-    { id: "g3", label: "Weekend escapes", progress: 80, category: "lifestyle" },
+  dna: [
+    { id: "dna1", trait: "Explorer", intensity: 88, emoji: "🧭" },
+    { id: "dna2", trait: "Learner", intensity: 74, emoji: "📚" },
+    { id: "dna3", trait: "Wellness Seeker", intensity: 69, emoji: "🌿" },
+    { id: "dna4", trait: "Athlete", intensity: 52, emoji: "🏃" },
+    { id: "dna5", trait: "Socializer", intensity: 41, emoji: "🤝" },
   ],
+  professionalGoal: {
+    label: "Become Team Lead",
+    progress: 68,
+    next: "Finish 'Leading Engineering Teams' course",
+  },
+  lifestyleGoal: {
+    label: "Reduce stress",
+    progress: 42,
+    next: "Two wellness sessions this week",
+  },
   quests: [
     { id: "q1", title: "Mindful Albania", desc: "Attend 4 wellness events", progress: 75, color: "coral" as const },
     { id: "q2", title: "Code Master", desc: "Finish React Fundamentals", progress: 30, color: "sky" as const },
     { id: "q3", title: "Team Player", desc: "Join 2 team adventures", progress: 50, color: "emerald" as const },
   ],
 };
+
+// "How are you feeling today?" entry chips — seed the concierge with these prompts.
+export const feelingChips = [
+  { id: "f1", emoji: "😮‍💨", label: "I'm stressed", prompt: "I've been really stressed this week. Help me unwind." },
+  { id: "f2", emoji: "🧠", label: "I want to learn", prompt: "I want to grow my skills. What should I learn next?" },
+  { id: "f3", emoji: "🔥", label: "I need motivation", prompt: "I'm feeling stuck. Suggest something to get me moving again." },
+  { id: "f4", emoji: "🏔️", label: "I want an adventure", prompt: "I need an adventure this weekend in Albania. Surprise me." },
+  { id: "f5", emoji: "✨", label: "Surprise me", prompt: "Surprise me with something unexpected within my monthly budget." },
+];
 
 export const aiBundle = {
   id: "bundle-weekend-recharge",
@@ -41,11 +60,39 @@ export const aiBundle = {
   matchScore: 96,
 };
 
-export const perxDrop = {
-  title: "Dajti Express VIP",
-  desc: "Only 4 passes left this week — sunset cable car + dinner.",
-  endsInSeconds: 4 * 3600 + 22 * 60 + 15,
-};
+// Multiple weekly Perx Drops with countdowns and emotional framing.
+export const perxDrops = [
+  {
+    id: "drop-dajti",
+    title: "Dajti Express VIP",
+    desc: "Sunset cable car + a slow dinner at 1,613m.",
+    emoji: "🚠",
+    endsInSeconds: 4 * 3600 + 22 * 60 + 15,
+    spotsLeft: 4,
+    accent: "coral" as const,
+  },
+  {
+    id: "drop-theth",
+    title: "Theth Sunrise Hike",
+    desc: "Tiny group, guided. Saturday only.",
+    emoji: "🏔️",
+    endsInSeconds: 38 * 3600,
+    spotsLeft: 6,
+    accent: "emerald" as const,
+  },
+  {
+    id: "drop-jazz",
+    title: "Jazz Night · Blloku",
+    desc: "Live trio + curated wine pairing.",
+    emoji: "🎷",
+    endsInSeconds: 12 * 3600 + 7 * 60,
+    spotsLeft: 9,
+    accent: "sky" as const,
+  },
+];
+
+// Kept for the older home variant fallback
+export const perxDrop = perxDrops[0];
 
 export const discoverFeed = [
   {
@@ -56,7 +103,8 @@ export const discoverFeed = [
     priceALL: 1200,
     matchScore: 98,
     accent: "sky" as const,
-    gradient: "from-sky/30 via-sky/10 to-transparent",
+    emoji: "☕",
+    story: "Quiet third-place to focus without the office buzz.",
   },
   {
     id: "d2",
@@ -66,7 +114,8 @@ export const discoverFeed = [
     priceALL: 3500,
     matchScore: 91,
     accent: "emerald" as const,
-    gradient: "from-emerald/30 via-emerald/10 to-transparent",
+    emoji: "🏺",
+    story: "Two hours making something with your hands. No screens.",
   },
   {
     id: "d3",
@@ -76,7 +125,8 @@ export const discoverFeed = [
     priceALL: 8200,
     matchScore: 88,
     accent: "coral" as const,
-    gradient: "from-coral/30 via-coral/10 to-transparent",
+    emoji: "🪂",
+    story: "Tandem flight as the city turns gold.",
   },
   {
     id: "d4",
@@ -86,7 +136,8 @@ export const discoverFeed = [
     priceALL: 5400,
     matchScore: 94,
     accent: "sky" as const,
-    gradient: "from-sky/30 via-navy/10 to-transparent",
+    emoji: "🤖",
+    story: "Three hours, one new skill that compounds at work.",
   },
   {
     id: "d5",
@@ -96,7 +147,8 @@ export const discoverFeed = [
     priceALL: 3200,
     matchScore: 89,
     accent: "coral" as const,
-    gradient: "from-coral/30 via-sky/10 to-transparent",
+    emoji: "🥂",
+    story: "Slow morning, panoramic view, no rush.",
   },
   {
     id: "d6",
@@ -106,7 +158,8 @@ export const discoverFeed = [
     priceALL: 11000,
     matchScore: 86,
     accent: "emerald" as const,
-    gradient: "from-emerald/30 via-sky/10 to-transparent",
+    emoji: "🌊",
+    story: "Sea, salt, and a long lunch with feta.",
   },
 ];
 
@@ -141,20 +194,23 @@ export const currentCompany = {
 export const companyInsights = [
   {
     id: "ci1",
-    headline: "Wellness experiences drive 2.3× more engagement than gym memberships.",
+    headline: "Employees engage most with wellness experiences.",
+    story: "Wellness bundles get 2.3× the engagement of gym memberships, and stress signals drop within 5 days of redemption.",
     action: "Shift 15% of fitness budget to wellness bundles.",
     impact: "+8 engagement",
   },
   {
     id: "ci2",
-    headline: "Learning-related benefits have the highest completion rate (88%).",
+    headline: "Learning benefits have the highest completion rate.",
+    story: "88% of started learning quests reach completion — the highest of any category. Engineering leads, Sales is catching up.",
     action: "Top up the L&D pool for Q4.",
     impact: "+12 growth quests",
   },
   {
     id: "ci3",
-    headline: "Outdoor activities outperform indoor by 41% in repeat usage.",
-    action: "Feature Theth & Riviera trips on employee home.",
+    headline: "Outdoor experiences drive stronger participation.",
+    story: "Theth and Riviera trips outperform indoor experiences by 41% in repeat usage. Worth a permanent featured slot.",
+    action: "Feature Theth & Riviera on employee home.",
     impact: "+23 bookings",
   },
 ];
