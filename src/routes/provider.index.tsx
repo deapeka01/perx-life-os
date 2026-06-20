@@ -1,13 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { PageHeader } from "@/components/perx/PageHeader";
-import { StatTile } from "@/components/perx/StatTile";
+import { ArrowRight, Package, Radar, Megaphone } from "lucide-react";
+import { AgentChat } from "@/components/perx/AgentChat";
 import {
   corporateDemand,
   currentProvider,
   formatALL,
-  providerServices,
 } from "@/lib/mock-data";
-import { Wallet, Calendar, Inbox, Building2, ArrowRight, LogOut, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/provider/")({
   head: () => ({ meta: [{ title: "Provider Studio · Perx" }] }),
@@ -16,111 +14,101 @@ export const Route = createFileRoute("/provider/")({
 
 function ProviderHome() {
   return (
-    <div className="px-5 pb-10 pt-8 sm:px-8 md:px-10 md:pt-12">
-      <PageHeader
-        eyebrow={`${currentProvider.category} · Tirana`}
-        title={currentProvider.name}
-        subtitle="Your bookings, your demand signals, your AI copilots."
-        actions={
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-xs font-extrabold text-navy/60 transition hover:bg-muted"
-          >
-            <LogOut className="size-3.5" /> Switch role
-          </Link>
-        }
-      />
+    <div className="mx-auto h-[calc(100dvh-72px)] max-w-7xl px-5 pb-5 md:px-10">
+      <AgentChat agent="provider" rightRail={<SideRail />} />
+    </div>
+  );
+}
 
-      <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <StatTile label="Monthly revenue" value={formatALL(currentProvider.monthlyRevenueALL)} icon={<Wallet className="size-4" />} delta="+22% MoM" tone="coral" />
-        <StatTile label="Bookings" value={currentProvider.bookings} icon={<Calendar className="size-4" />} delta="+18 vs prev." />
-        <StatTile label="Pending requests" value={currentProvider.pendingRequests} icon={<Inbox className="size-4" />} delta="Awaiting confirm" />
-        <StatTile label="Corporate reach" value={`${currentProvider.corporateReach} co's`} icon={<Building2 className="size-4" />} delta="3 new this week" />
+function SideRail() {
+  return (
+    <div className="space-y-4">
+      <div className="rounded-3xl border border-white/40 bg-white/70 p-5 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)] backdrop-blur-xl">
+        <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-navy/55">
+          {currentProvider.name} · this month
+        </p>
+        <p className="mt-2 font-display text-3xl font-extrabold tabular-nums text-navy">
+          {formatALL(currentProvider.monthlyRevenueALL)}
+        </p>
+        <p className="text-xs font-bold text-emerald">+22% MoM</p>
+        <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+          <Stat label="Bookings" value={currentProvider.bookings} />
+          <Stat label="Pending" value={currentProvider.pendingRequests} />
+          <Stat label="Companies" value={currentProvider.corporateReach} />
+        </div>
       </div>
 
-      <div className="mt-10 grid gap-8 lg:grid-cols-3">
-        <section className="lg:col-span-2">
-          <div className="mb-5 flex items-end justify-between">
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-navy/40">
-                Corporate Demand Feed
-              </p>
-              <h2 className="font-display text-2xl font-extrabold text-navy">
-                What companies are searching for
-              </h2>
-            </div>
-            <Link to="/provider/demand" className="text-xs font-bold text-coral">
-              Open feed <ArrowRight className="inline size-3" />
-            </Link>
-          </div>
-          <div className="space-y-3">
-            {corporateDemand.map((d) => {
-              const colors = {
-                coral: "bg-coral/10 text-coral",
-                sky: "bg-sky/10 text-sky",
-                emerald: "bg-emerald/10 text-emerald",
-              }[d.color];
-              return (
-                <article
-                  key={d.id}
-                  className="flex items-center gap-5 rounded-3xl border border-border bg-card p-5 shadow-soft transition hover:-translate-y-0.5 hover:shadow-lift"
-                >
-                  <div className={`grid size-12 shrink-0 place-items-center rounded-2xl text-xl font-extrabold ${colors}`}>
-                    {d.employees}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-display text-base font-extrabold text-navy">{d.segment}</p>
-                    <p className="text-xs text-navy/55">{d.employees} employees actively searching</p>
-                  </div>
-                  <div className="shrink-0 text-right">
-                    <p className="font-display text-sm font-extrabold text-emerald">{d.trend}</p>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-navy/40">
-                      30 day trend
-                    </p>
-                  </div>
-                  <button className="hidden rounded-xl bg-navy px-4 py-2 text-xs font-extrabold text-white transition hover:bg-coral sm:inline-block">
-                    Target offer
-                  </button>
-                </article>
-              );
-            })}
-          </div>
-        </section>
-
-        <section>
-          <h2 className="mb-5 font-display text-2xl font-extrabold text-navy">Top services</h2>
-          <div className="space-y-3">
-            {providerServices.slice(0, 3).map((s) => (
-              <div
-                key={s.id}
-                className="flex items-center justify-between rounded-2xl border border-border bg-card p-4 shadow-soft"
+      <div className="rounded-3xl border border-white/40 bg-white/70 p-5 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)] backdrop-blur-xl">
+        <div className="flex items-center justify-between">
+          <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-coral">
+            Corporate demand feed · live
+          </p>
+          <Link to="/provider/demand" className="text-xs font-extrabold text-coral">
+            All <ArrowRight className="inline size-3" />
+          </Link>
+        </div>
+        <ul className="mt-3 space-y-2">
+          {corporateDemand.slice(0, 4).map((d) => (
+            <li
+              key={d.id}
+              className="flex items-center gap-3 rounded-xl border border-white/60 bg-white/70 px-3 py-2 backdrop-blur"
+            >
+              <span
+                className={`grid size-9 place-items-center rounded-lg text-sm font-extrabold ${
+                  {
+                    coral: "bg-coral/10 text-coral",
+                    sky: "bg-sky/10 text-sky",
+                    emerald: "bg-emerald/10 text-emerald",
+                  }[d.color]
+                }`}
               >
-                <div className="min-w-0">
-                  <p className="truncate font-display text-sm font-extrabold text-navy">{s.name}</p>
-                  <p className="text-xs text-navy/55">{s.bookings} bookings</p>
-                </div>
-                <p className="shrink-0 font-display text-sm font-extrabold text-navy">
-                  {formatALL(s.price)}
+                {d.employees}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-extrabold text-navy">{d.segment}</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-emerald">
+                  {d.trend} · 30d
                 </p>
               </div>
-            ))}
-          </div>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-          <div className="mt-6 rounded-3xl bg-navy p-6 text-white shadow-lift">
-            <Sparkles className="size-5 text-coral" />
-            <h3 className="mt-3 font-display text-lg font-extrabold">AI Offer Builder</h3>
-            <p className="mt-1 text-sm text-white/60">
-              Describe a service. Perx writes the copy, suggests pricing, and bundles it.
-            </p>
-            <Link
-              to="/provider/services"
-              className="mt-4 inline-block rounded-xl bg-coral px-4 py-2 text-xs font-extrabold text-white shadow-coral"
-            >
-              Build an offer
-            </Link>
-          </div>
-        </section>
+      <div className="grid grid-cols-3 gap-3">
+        <QuickTile to="/provider/services" icon={Package} label="Offers" />
+        <QuickTile to="/provider/demand" icon={Radar} label="Demand" />
+        <QuickTile to="/provider/marketing" icon={Megaphone} label="Market" />
       </div>
     </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: number | string }) {
+  return (
+    <div className="rounded-xl bg-navy/5 px-2 py-2 text-center">
+      <p className="font-display text-base font-extrabold tabular-nums text-navy">{value}</p>
+      <p className="text-[10px] font-bold uppercase tracking-widest text-navy/50">{label}</p>
+    </div>
+  );
+}
+
+function QuickTile({
+  to,
+  icon: Icon,
+  label,
+}: {
+  to: "/provider/services" | "/provider/demand" | "/provider/marketing";
+  icon: typeof Package;
+  label: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className="flex flex-col items-center gap-1 rounded-2xl border border-white/60 bg-white/60 p-3 text-xs font-extrabold text-navy shadow-soft backdrop-blur transition hover:-translate-y-0.5 hover:border-coral/40"
+    >
+      <Icon className="size-4 text-coral" />
+      {label}
+    </Link>
   );
 }
