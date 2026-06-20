@@ -27,6 +27,7 @@ import { Route as EmployeeConciergeRouteImport } from './routes/employee.concier
 import { Route as CompanyEmployeesRouteImport } from './routes/company.employees'
 import { Route as CompanyApprovalsRouteImport } from './routes/company.approvals'
 import { Route as CompanyAnalyticsRouteImport } from './routes/company.analytics'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 
 const ProviderRoute = ProviderRouteImport.update({
   id: '/provider',
@@ -118,12 +119,18 @@ const CompanyAnalyticsRoute = CompanyAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => CompanyRoute,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/company': typeof CompanyRouteWithChildren
   '/employee': typeof EmployeeRouteWithChildren
   '/provider': typeof ProviderRouteWithChildren
+  '/api/chat': typeof ApiChatRoute
   '/company/analytics': typeof CompanyAnalyticsRoute
   '/company/approvals': typeof CompanyApprovalsRoute
   '/company/employees': typeof CompanyEmployeesRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/chat': typeof ApiChatRoute
   '/company/analytics': typeof CompanyAnalyticsRoute
   '/company/approvals': typeof CompanyApprovalsRoute
   '/company/employees': typeof CompanyEmployeesRoute
@@ -162,6 +170,7 @@ export interface FileRoutesById {
   '/company': typeof CompanyRouteWithChildren
   '/employee': typeof EmployeeRouteWithChildren
   '/provider': typeof ProviderRouteWithChildren
+  '/api/chat': typeof ApiChatRoute
   '/company/analytics': typeof CompanyAnalyticsRoute
   '/company/approvals': typeof CompanyApprovalsRoute
   '/company/employees': typeof CompanyEmployeesRoute
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/company'
     | '/employee'
     | '/provider'
+    | '/api/chat'
     | '/company/analytics'
     | '/company/approvals'
     | '/company/employees'
@@ -201,6 +211,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/api/chat'
     | '/company/analytics'
     | '/company/approvals'
     | '/company/employees'
@@ -221,6 +232,7 @@ export interface FileRouteTypes {
     | '/company'
     | '/employee'
     | '/provider'
+    | '/api/chat'
     | '/company/analytics'
     | '/company/approvals'
     | '/company/employees'
@@ -242,6 +254,7 @@ export interface RootRouteChildren {
   CompanyRoute: typeof CompanyRouteWithChildren
   EmployeeRoute: typeof EmployeeRouteWithChildren
   ProviderRoute: typeof ProviderRouteWithChildren
+  ApiChatRoute: typeof ApiChatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -372,6 +385,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompanyAnalyticsRouteImport
       parentRoute: typeof CompanyRoute
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -437,6 +457,7 @@ const rootRouteChildren: RootRouteChildren = {
   CompanyRoute: CompanyRouteWithChildren,
   EmployeeRoute: EmployeeRouteWithChildren,
   ProviderRoute: ProviderRouteWithChildren,
+  ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
