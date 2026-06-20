@@ -9,11 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProviderRouteImport } from './routes/provider'
 import { Route as EmployeeRouteImport } from './routes/employee'
 import { Route as CompanyRouteImport } from './routes/company'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProviderIndexRouteImport } from './routes/provider.index'
 import { Route as EmployeeIndexRouteImport } from './routes/employee.index'
 import { Route as CompanyIndexRouteImport } from './routes/company.index'
+import { Route as ProviderServicesRouteImport } from './routes/provider.services'
+import { Route as ProviderMarketingRouteImport } from './routes/provider.marketing'
+import { Route as ProviderDemandRouteImport } from './routes/provider.demand'
 import { Route as EmployeeTeamRouteImport } from './routes/employee.team'
 import { Route as EmployeeQuestsRouteImport } from './routes/employee.quests'
 import { Route as EmployeeProfileRouteImport } from './routes/employee.profile'
@@ -23,6 +28,11 @@ import { Route as CompanyEmployeesRouteImport } from './routes/company.employees
 import { Route as CompanyApprovalsRouteImport } from './routes/company.approvals'
 import { Route as CompanyAnalyticsRouteImport } from './routes/company.analytics'
 
+const ProviderRoute = ProviderRouteImport.update({
+  id: '/provider',
+  path: '/provider',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EmployeeRoute = EmployeeRouteImport.update({
   id: '/employee',
   path: '/employee',
@@ -38,6 +48,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProviderIndexRoute = ProviderIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProviderRoute,
+} as any)
 const EmployeeIndexRoute = EmployeeIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -47,6 +62,21 @@ const CompanyIndexRoute = CompanyIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => CompanyRoute,
+} as any)
+const ProviderServicesRoute = ProviderServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => ProviderRoute,
+} as any)
+const ProviderMarketingRoute = ProviderMarketingRouteImport.update({
+  id: '/marketing',
+  path: '/marketing',
+  getParentRoute: () => ProviderRoute,
+} as any)
+const ProviderDemandRoute = ProviderDemandRouteImport.update({
+  id: '/demand',
+  path: '/demand',
+  getParentRoute: () => ProviderRoute,
 } as any)
 const EmployeeTeamRoute = EmployeeTeamRouteImport.update({
   id: '/team',
@@ -93,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/company': typeof CompanyRouteWithChildren
   '/employee': typeof EmployeeRouteWithChildren
+  '/provider': typeof ProviderRouteWithChildren
   '/company/analytics': typeof CompanyAnalyticsRoute
   '/company/approvals': typeof CompanyApprovalsRoute
   '/company/employees': typeof CompanyEmployeesRoute
@@ -101,8 +132,12 @@ export interface FileRoutesByFullPath {
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/quests': typeof EmployeeQuestsRoute
   '/employee/team': typeof EmployeeTeamRoute
+  '/provider/demand': typeof ProviderDemandRoute
+  '/provider/marketing': typeof ProviderMarketingRoute
+  '/provider/services': typeof ProviderServicesRoute
   '/company/': typeof CompanyIndexRoute
   '/employee/': typeof EmployeeIndexRoute
+  '/provider/': typeof ProviderIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -114,14 +149,19 @@ export interface FileRoutesByTo {
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/quests': typeof EmployeeQuestsRoute
   '/employee/team': typeof EmployeeTeamRoute
+  '/provider/demand': typeof ProviderDemandRoute
+  '/provider/marketing': typeof ProviderMarketingRoute
+  '/provider/services': typeof ProviderServicesRoute
   '/company': typeof CompanyIndexRoute
   '/employee': typeof EmployeeIndexRoute
+  '/provider': typeof ProviderIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/company': typeof CompanyRouteWithChildren
   '/employee': typeof EmployeeRouteWithChildren
+  '/provider': typeof ProviderRouteWithChildren
   '/company/analytics': typeof CompanyAnalyticsRoute
   '/company/approvals': typeof CompanyApprovalsRoute
   '/company/employees': typeof CompanyEmployeesRoute
@@ -130,8 +170,12 @@ export interface FileRoutesById {
   '/employee/profile': typeof EmployeeProfileRoute
   '/employee/quests': typeof EmployeeQuestsRoute
   '/employee/team': typeof EmployeeTeamRoute
+  '/provider/demand': typeof ProviderDemandRoute
+  '/provider/marketing': typeof ProviderMarketingRoute
+  '/provider/services': typeof ProviderServicesRoute
   '/company/': typeof CompanyIndexRoute
   '/employee/': typeof EmployeeIndexRoute
+  '/provider/': typeof ProviderIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -139,6 +183,7 @@ export interface FileRouteTypes {
     | '/'
     | '/company'
     | '/employee'
+    | '/provider'
     | '/company/analytics'
     | '/company/approvals'
     | '/company/employees'
@@ -147,8 +192,12 @@ export interface FileRouteTypes {
     | '/employee/profile'
     | '/employee/quests'
     | '/employee/team'
+    | '/provider/demand'
+    | '/provider/marketing'
+    | '/provider/services'
     | '/company/'
     | '/employee/'
+    | '/provider/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -160,13 +209,18 @@ export interface FileRouteTypes {
     | '/employee/profile'
     | '/employee/quests'
     | '/employee/team'
+    | '/provider/demand'
+    | '/provider/marketing'
+    | '/provider/services'
     | '/company'
     | '/employee'
+    | '/provider'
   id:
     | '__root__'
     | '/'
     | '/company'
     | '/employee'
+    | '/provider'
     | '/company/analytics'
     | '/company/approvals'
     | '/company/employees'
@@ -175,18 +229,30 @@ export interface FileRouteTypes {
     | '/employee/profile'
     | '/employee/quests'
     | '/employee/team'
+    | '/provider/demand'
+    | '/provider/marketing'
+    | '/provider/services'
     | '/company/'
     | '/employee/'
+    | '/provider/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CompanyRoute: typeof CompanyRouteWithChildren
   EmployeeRoute: typeof EmployeeRouteWithChildren
+  ProviderRoute: typeof ProviderRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/provider': {
+      id: '/provider'
+      path: '/provider'
+      fullPath: '/provider'
+      preLoaderRoute: typeof ProviderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/employee': {
       id: '/employee'
       path: '/employee'
@@ -208,6 +274,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/provider/': {
+      id: '/provider/'
+      path: '/'
+      fullPath: '/provider/'
+      preLoaderRoute: typeof ProviderIndexRouteImport
+      parentRoute: typeof ProviderRoute
+    }
     '/employee/': {
       id: '/employee/'
       path: '/'
@@ -221,6 +294,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/company/'
       preLoaderRoute: typeof CompanyIndexRouteImport
       parentRoute: typeof CompanyRoute
+    }
+    '/provider/services': {
+      id: '/provider/services'
+      path: '/services'
+      fullPath: '/provider/services'
+      preLoaderRoute: typeof ProviderServicesRouteImport
+      parentRoute: typeof ProviderRoute
+    }
+    '/provider/marketing': {
+      id: '/provider/marketing'
+      path: '/marketing'
+      fullPath: '/provider/marketing'
+      preLoaderRoute: typeof ProviderMarketingRouteImport
+      parentRoute: typeof ProviderRoute
+    }
+    '/provider/demand': {
+      id: '/provider/demand'
+      path: '/demand'
+      fullPath: '/provider/demand'
+      preLoaderRoute: typeof ProviderDemandRouteImport
+      parentRoute: typeof ProviderRoute
     }
     '/employee/team': {
       id: '/employee/team'
@@ -320,10 +414,29 @@ const EmployeeRouteWithChildren = EmployeeRoute._addFileChildren(
   EmployeeRouteChildren,
 )
 
+interface ProviderRouteChildren {
+  ProviderDemandRoute: typeof ProviderDemandRoute
+  ProviderMarketingRoute: typeof ProviderMarketingRoute
+  ProviderServicesRoute: typeof ProviderServicesRoute
+  ProviderIndexRoute: typeof ProviderIndexRoute
+}
+
+const ProviderRouteChildren: ProviderRouteChildren = {
+  ProviderDemandRoute: ProviderDemandRoute,
+  ProviderMarketingRoute: ProviderMarketingRoute,
+  ProviderServicesRoute: ProviderServicesRoute,
+  ProviderIndexRoute: ProviderIndexRoute,
+}
+
+const ProviderRouteWithChildren = ProviderRoute._addFileChildren(
+  ProviderRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CompanyRoute: CompanyRouteWithChildren,
   EmployeeRoute: EmployeeRouteWithChildren,
+  ProviderRoute: ProviderRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
