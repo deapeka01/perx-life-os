@@ -1,16 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Building2, MapPin, Search, Sparkles, Store } from "lucide-react";
+import { ArrowRight, Building2, Sparkles, Store } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/perx/LanguageSwitcher";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Perx — Choose your experience" },
+      { title: "Perx — AI-powered Employee Lifestyle OS" },
       {
         name: "description",
         content:
-          "An AI-powered Employee Lifestyle Operating System for companies, employees and providers.",
+          "Perx turns company-funded budgets into meaningful life progress — for employees, companies, and providers.",
       },
     ],
   }),
@@ -24,120 +24,115 @@ function RolePicker() {
     {
       to: "/employee",
       icon: Sparkles,
-      label: t("role.employee"),
-      desc: t("role.employee.desc"),
-      tone: "coral" as const,
+      label: "I'm an employee",
+      desc: "Talk to your AI Lifestyle Concierge. Pursue goals. Discover meaningful experiences.",
+      cta: "Enter your home",
+      tone: "ai" as const,
     },
     {
       to: "/company",
       icon: Building2,
-      label: t("role.company"),
-      desc: t("role.company.desc"),
+      label: "We're a company",
+      desc: "Fund growth and wellbeing. Strategic AI insights, simple approvals.",
+      cta: "Open HQ",
       tone: "navy" as const,
     },
     {
       to: "/provider",
       icon: Store,
-      label: t("role.provider"),
-      desc: t("role.provider.desc"),
-      tone: "sky" as const,
+      label: "I'm a provider",
+      desc: "See real corporate demand. Build offers with AI. Reach engaged employees.",
+      cta: "Open studio",
+      tone: "card" as const,
     },
   ];
 
   return (
-    <div className="min-h-dvh bg-canvas">
-      {/* Top bar — Wolt style: location left, language right */}
-      <header className="sticky top-0 z-30 border-b border-border bg-canvas/95 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-4 md:px-8">
-          <div className="flex items-center gap-3">
-            <div className="grid size-11 place-items-center rounded-2xl bg-coral font-display text-xl font-extrabold text-white shadow-coral">
-              P
-            </div>
-            <div className="hidden sm:block">
-              <p className="font-display text-lg font-extrabold leading-none text-navy">Perx</p>
-              <p className="mt-1 flex items-center gap-1 text-xs font-bold text-navy/70">
-                <MapPin className="size-3.5" aria-hidden /> {t("home.delivering")} {t("home.city")}
-              </p>
-            </div>
-          </div>
-          <LanguageSwitcher />
-        </div>
+    <div className="relative min-h-dvh overflow-hidden bg-canvas">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-40 left-1/2 -z-0 h-[520px] w-[820px] -translate-x-1/2 rounded-full opacity-30 blur-3xl"
+        style={{
+          background:
+            "radial-gradient(closest-side, oklch(0.72 0.19 25 / 0.45), oklch(0.72 0.15 230 / 0.35), transparent)",
+        }}
+      />
+
+      <header className="relative z-10 mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-5 md:px-8 md:py-7">
+        <Link to="/" aria-label="Perx home" className="flex items-center gap-3">
+          <span className="grid size-11 place-items-center rounded-2xl bg-gradient-ai font-display text-xl font-extrabold text-white ring-ai">
+            P
+          </span>
+          <span className="font-display text-lg font-extrabold leading-none text-navy">Perx</span>
+        </Link>
+        <LanguageSwitcher />
       </header>
 
-      <main className="mx-auto max-w-6xl px-5 pb-16 pt-8 md:px-8 md:pt-12">
-        {/* Hero */}
+      <main className="relative z-10 mx-auto max-w-6xl px-5 pb-20 pt-6 md:px-8 md:pt-10">
         <section className="animate-slide-up">
           <span className="inline-flex items-center gap-2 rounded-full border-2 border-coral/30 bg-coral/10 px-3 py-1.5 text-xs font-extrabold uppercase tracking-widest text-coral">
             <span className="size-1.5 animate-pulse-dot rounded-full bg-coral" />
-            {t("landing.tag")}
+            AI Lifestyle Operating System
           </span>
-          <h1 className="mt-5 max-w-3xl font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-navy text-balance sm:text-6xl">
-            {t("landing.title.1")}
-            <br />
-            <span className="text-coral">{t("landing.title.2")}</span> {t("landing.title.3")}
+          <h1 className="mt-6 max-w-3xl font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-navy text-balance sm:text-6xl">
+            Turn company budgets into{" "}
+            <span className="text-gradient-ai">meaningful life progress.</span>
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-navy/80 sm:text-xl">
-            {t("landing.subtitle")}
+          <p className="mt-5 max-w-2xl text-lg text-navy/75 sm:text-xl">
+            Perx connects employees, companies and providers around one idea: growth and
+            wellbeing, not perks. Tell Perx how you feel — it plans the rest.
           </p>
 
-          {/* Wolt-style big search */}
-          <div className="mt-7 max-w-2xl">
-            <Link
-              to="/employee/concierge"
-              className="group flex h-16 items-center gap-3 rounded-2xl border-2 border-navy/15 bg-card px-5 shadow-soft transition hover:border-coral hover:shadow-lift"
-            >
-              <Search className="size-6 text-navy" aria-hidden />
-              <span className="flex-1 truncate text-base font-semibold text-navy/70 sm:text-lg">
-                {t("landing.search.placeholder")}
-              </span>
-              <span className="hidden h-10 items-center justify-center rounded-xl bg-coral px-4 font-display text-sm font-extrabold text-white shadow-coral sm:inline-flex">
-                {t("home.aiPick")}
-              </span>
-            </Link>
-          </div>
+          <Link
+            to="/employee/concierge"
+            search={{ q: "I'm not sure what I need this week. Surprise me." }}
+            className="group mt-7 inline-flex h-14 max-w-full items-center gap-3 rounded-2xl bg-navy pl-2 pr-5 text-white shadow-lift transition hover:-translate-y-0.5"
+          >
+            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-gradient-ai ring-ai">
+              <Sparkles className="size-5" aria-hidden />
+            </span>
+            <span className="truncate font-display text-base font-extrabold sm:text-lg">
+              Try the AI Concierge — "How are you feeling today?"
+            </span>
+            <ArrowRight className="ml-1 size-5 transition group-hover:translate-x-1" />
+          </Link>
         </section>
 
-        {/* Role tiles */}
-        <section className="mt-14">
+        <section className="mt-16">
           <h2 className="font-display text-2xl font-extrabold text-navy sm:text-3xl">
             {t("landing.choose")}
           </h2>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {roles.map((r, i) => {
               const Icon = r.icon;
-              const tones = {
-                coral: "bg-coral text-white border-coral",
+              const toneClasses = {
+                ai: "bg-gradient-ai text-white border-transparent ring-ai",
                 navy: "bg-navy text-white border-navy",
-                sky: "bg-card text-navy border-border",
-              };
+                card: "bg-card text-navy border-border",
+              }[r.tone];
+              const ctaBg = {
+                ai: "bg-white/15 text-white",
+                navy: "bg-white/15 text-white",
+                card: "bg-coral text-white",
+              }[r.tone];
+              const descColor = r.tone === "card" ? "text-navy/70" : "text-white/85";
+              const iconBg = r.tone === "card" ? "bg-coral/10 text-coral" : "bg-white/15 text-white";
               return (
                 <Link
                   key={r.to}
                   to={r.to}
-                  className={`group flex min-h-[200px] flex-col justify-between rounded-3xl border-2 p-6 shadow-soft transition hover:-translate-y-1 hover:shadow-lift animate-slide-up ${tones[r.tone]}`}
+                  className={`group flex min-h-[220px] flex-col justify-between rounded-3xl border-2 p-6 shadow-soft transition hover:-translate-y-1 hover:shadow-lift animate-slide-up ${toneClasses}`}
                   style={{ animationDelay: `${i * 80}ms` }}
                 >
-                  <div className="flex items-center justify-between">
-                    <div
-                      className={`grid size-14 place-items-center rounded-2xl ${
-                        r.tone === "sky" ? "bg-sky/15 text-sky" : "bg-white/15 text-white"
-                      }`}
-                    >
-                      <Icon className="size-7" strokeWidth={2.2} aria-hidden />
-                    </div>
+                  <div className={`grid size-14 place-items-center rounded-2xl ${iconBg}`}>
+                    <Icon className="size-7" strokeWidth={2.2} aria-hidden />
                   </div>
                   <div>
                     <h3 className="font-display text-2xl font-extrabold">{r.label}</h3>
-                    <p
-                      className={`mt-2 text-base ${
-                        r.tone === "sky" ? "text-navy/75" : "text-white/85"
-                      }`}
-                    >
-                      {r.desc}
-                    </p>
-                    <div className="mt-4 inline-flex items-center gap-2 font-display text-base font-extrabold">
-                      {t("role.enter")} <ArrowRight className="size-5 transition group-hover:translate-x-1" />
-                    </div>
+                    <p className={`mt-2 text-base ${descColor}`}>{r.desc}</p>
+                    <span className={`mt-5 inline-flex items-center gap-2 rounded-xl px-4 py-2 font-display text-sm font-extrabold ${ctaBg}`}>
+                      {r.cta} <ArrowRight className="size-4 transition group-hover:translate-x-1" />
+                    </span>
                   </div>
                 </Link>
               );
@@ -146,7 +141,7 @@ function RolePicker() {
         </section>
 
         <footer className="mt-16 border-t border-border pt-6 text-sm font-medium text-navy/60">
-          {t("landing.footer")}
+          Mock data only · No real transactions · Currency: Albanian Lek (ALL)
         </footer>
       </main>
     </div>

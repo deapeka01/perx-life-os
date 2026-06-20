@@ -1,12 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport, type UIMessage } from "ai";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
-import { Sparkles, Send } from "lucide-react";
-import { aiBundle, conciergeStarters, formatALL } from "@/lib/mock-data";
+import { ArrowLeft, Send, Sparkles } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import { conciergeStarters, currentEmployee } from "@/lib/mock-data";
 
-const searchSchema = z.object({
-  q: z.string().optional(),
-});
+const searchSchema = z.object({ q: z.string().optional() });
 
 export const Route = createFileRoute("/employee/concierge")({
   validateSearch: searchSchema,
@@ -14,154 +15,199 @@ export const Route = createFileRoute("/employee/concierge")({
   component: Concierge,
 });
 
-type Msg = { role: "user" | "ai"; text: string; bundle?: typeof aiBundle };
+const transport = new DefaultChatTransport({ api: "/api/chat" });
 
 function Concierge() {
   const { q } = Route.useSearch();
-  const initial: Msg[] = q
-    ? [
-        { role: "user", text: q },
-        {
-          role: "ai",
-          text: `I hear you. Based on your Benefit DNA and a free Saturday, here's a Weekend Recharge bundle that should help.`,
-          bundle: aiBundle,
-        },
-      ]
-    : [
-        {
-          role: "ai",
-          text: `Hey Ardit 👋 I'm your Perx Concierge. Tell me how you feel, what you want to learn, or how to spend your credits — I'll handle the rest.`,
-        },
-      ];
-
-  const [messages, setMessages] = useState<Msg[]>(initial);
   const [input, setInput] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const seededRef = useRef(false);
 
-  const send = (text: string) => {
-    if (!text.trim()) return;
+  const { messages, sendMessage, status, error } = useChat({
+    transport,
+    onError: (e) => console.error("Concierge chat error:", e),
+  });
+
+  useEffect(() => {
+    if (seededRef.current) return;
+    if (q && q.trim()) {
+      seededRef.current = true;
+      void sendMessage({ text: q.trim() });
+    }
+  }, [q, sendMessage]);
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+  }, [messages, status]);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+  useEffect(() => {
+    if (status === "ready") inputRef.current?.focus();
+  }, [status]);
+
+  const isBusy = status === "submitted" || status === "streaming";
+
+  const onSubmit = async (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed || isBusy) return;
     setInput("");
-    setMessages((m) => [
-      ...m,
-      { role: "user", text },
-      {
-        role: "ai",
-        text: "Here's an AI-curated package matched to your goals and budget:",
-        bundle: aiBundle,
-      },
-    ]);
+    await sendMessage({ text: trimmed });
   };
 
+  const hasUserMessages = useMemo(
+    () => messages.some((m) => m.role === "user"),
+    [messages],
+  );
+
   return (
-    <div className="flex min-h-[calc(100vh-6rem)] flex-col px-5 pb-32 pt-8 sm:px-8 md:px-10 md:pb-10 md:pt-12">
-      <header>
-        <p className="text-[10px] font-bold uppercase tracking-widest text-navy/40">AI Concierge</p>
-        <h1 className="mt-1 font-display text-3xl font-extrabold tracking-tight text-navy sm:text-4xl">
-          What's on your mind?
-        </h1>
+    <div className="flex h-[calc(100dvh-5rem)] flex-col md:h-[100dvh]">
+      <header className="flex items-center justify-between gap-3 border-b border-border bg-canvas/95 px-5 py-3 backdrop-blur md:px-10">
+        <Link
+          to="/employee"
+          aria-label="Back"
+          className="grid size-10 place-items-center rounded-full border-2 border-border bg-card text-navy shadow-soft transition hover:border-coral"
+        >
+          <ArrowLeft className="size-5" />
+        </Link>
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="grid size-9 place-items-center rounded-xl bg-gradient-ai text-white ring-ai">
+            <Sparkles className="size-4" aria-hidden />
+          </span>
+          <div className="min-w-0">
+            <p className="text-[10px] font-extrabold uppercase tracking-widest text-navy/55">
+              Perx AI · Lifestyle Concierge
+            </p>
+            <p className="truncate font-display text-base font-extrabold text-navy">
+              Talking with {currentEmployee.firstName}
+            </p>
+          </div>
+        </div>
+        <span aria-hidden className="grid size-10 place-items-center opacity-0">·</span>
       </header>
 
-      <div className="mt-8 flex-1 space-y-5">
-        {messages.map((m, i) => (
-          <div
-            key={i}
-            className={`flex animate-slide-up ${m.role === "user" ? "justify-end" : "justify-start"}`}
-          >
-            {m.role === "ai" && (
-              <div className="mr-3 mt-1 grid size-9 shrink-0 place-items-center rounded-xl bg-navy text-coral">
-                <Sparkles className="size-4" />
+      <div ref={scrollerRef} className="flex-1 overflow-y-auto px-5 py-6 md:px-10">
+        <div className="mx-auto max-w-2xl space-y-5">
+          {!hasUserMessages && messages.length === 0 && (
+            <div className="animate-slide-up rounded-3xl border-2 border-border bg-card p-6 shadow-soft">
+              <span className="grid size-10 place-items-center rounded-xl bg-gradient-ai text-white ring-ai">
+                <Sparkles className="size-5" />
+              </span>
+              <h2 className="mt-4 font-display text-2xl font-extrabold text-navy">
+                Hey {currentEmployee.firstName} 👋
+              </h2>
+              <p className="mt-1 text-base font-medium text-navy/75">
+                Tell me how you feel, what you want to learn, or how to spend your credits.
+                I'll plan it.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {conciergeStarters.map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => onSubmit(s)}
+                    className="rounded-full border-2 border-border bg-canvas px-3.5 py-1.5 text-sm font-bold text-navy transition hover:border-coral hover:bg-coral hover:text-white"
+                  >
+                    {s}
+                  </button>
+                ))}
               </div>
-            )}
-            <div className="max-w-[80%] space-y-3">
-              <div
-                className={`rounded-2xl px-5 py-3 text-sm font-medium shadow-soft ${
-                  m.role === "user"
-                    ? "bg-coral text-white"
-                    : "bg-card text-navy border border-border"
-                }`}
-              >
-                {m.text}
-              </div>
-              {m.bundle && (
-                <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-lift">
-                  <div className="bg-navy p-5 text-white">
-                    <p className="text-[10px] font-extrabold uppercase tracking-widest text-sky">
-                      AI Bundle · {m.bundle.matchScore}% match
-                    </p>
-                    <h3 className="mt-2 font-display text-2xl font-extrabold">{m.bundle.title}</h3>
-                    <p className="mt-1 text-sm text-white/60">{m.bundle.tagline}</p>
-                  </div>
-                  <div className="space-y-2 p-5">
-                    {m.bundle.items.map((it) => (
-                      <div
-                        key={it.id}
-                        className="flex items-center justify-between rounded-xl bg-muted px-4 py-3"
-                      >
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-bold text-navy">{it.name}</p>
-                          <p className="text-xs text-navy/50">{it.provider}</p>
-                        </div>
-                        <p className="shrink-0 font-display text-sm font-extrabold text-navy">
-                          {formatALL(it.priceALL)}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex items-center justify-between border-t border-border p-5">
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-navy/40">
-                        Total
-                      </p>
-                      <p className="font-display text-xl font-extrabold text-navy">
-                        {formatALL(m.bundle.totalALL)}
-                      </p>
-                    </div>
-                    <button className="rounded-xl bg-coral px-5 py-2.5 font-display text-sm font-extrabold text-white shadow-coral transition hover:-translate-y-0.5">
-                      Request approval
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
-          </div>
-        ))}
+          )}
+
+          {messages.map((m) => (
+            <MessageBubble key={m.id} message={m} />
+          ))}
+
+          {isBusy && (
+            <div className="flex items-center gap-3 px-1">
+              <span className="grid size-8 place-items-center rounded-xl bg-gradient-ai text-white ring-ai">
+                <Sparkles className="size-4" />
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-2 text-sm font-bold text-navy/70 shadow-soft">
+                <Dot /> <Dot delay={120} /> <Dot delay={240} />
+                <span className="ml-1">Perx is thinking…</span>
+              </span>
+            </div>
+          )}
+
+          {error && (
+            <div className="rounded-2xl border-2 border-destructive/30 bg-destructive/5 p-4 text-sm font-medium text-destructive">
+              Something went wrong reaching the AI. Try again in a moment.
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Input bar */}
-      <div className="fixed inset-x-0 bottom-20 z-30 px-4 md:static md:bottom-auto md:mt-8 md:px-0">
-        <div className="mx-auto max-w-3xl md:mx-0">
-          <div className="mb-3 flex gap-2 overflow-x-auto md:flex-wrap md:overflow-visible">
-            {conciergeStarters.slice(0, 4).map((s) => (
-              <button
-                key={s}
-                onClick={() => send(s)}
-                className="shrink-0 whitespace-nowrap rounded-full border border-border bg-card px-3 py-1.5 text-xs font-bold text-navy/60 shadow-soft hover:bg-navy hover:text-white"
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              send(input);
-            }}
-            className="flex items-center gap-2 rounded-2xl border-2 border-border bg-card p-2 shadow-lift"
+      <div className="border-t border-border bg-canvas px-5 pb-6 pt-3 md:px-10">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void onSubmit(input);
+          }}
+          className="mx-auto flex max-w-2xl items-center gap-2 rounded-2xl border-2 border-border bg-card p-2 shadow-lift"
+        >
+          <input
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Tell Perx what you need…"
+            aria-label="Message Perx"
+            disabled={isBusy}
+            className="flex-1 bg-transparent px-4 py-3 text-base font-medium text-navy placeholder:text-navy/45 focus:outline-none disabled:opacity-60"
+          />
+          <button
+            type="submit"
+            disabled={isBusy || !input.trim()}
+            aria-label="Send"
+            className="grid size-11 shrink-0 place-items-center rounded-xl bg-gradient-ai text-white ring-ai transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Tell Perx what you need…"
-              className="flex-1 bg-transparent px-4 py-3 text-base font-medium text-navy placeholder:text-navy/40 focus:outline-none"
-            />
-            <button
-              type="submit"
-              className="grid size-11 shrink-0 place-items-center rounded-xl bg-coral text-white shadow-coral transition hover:-translate-y-0.5"
-              aria-label="Send"
-            >
-              <Send className="size-4" />
-            </button>
-          </form>
+            <Send className="size-4" />
+          </button>
+        </form>
+        <p className="mx-auto mt-2 max-w-2xl text-center text-[11px] font-bold uppercase tracking-wider text-navy/40">
+          Powered by Lovable AI · suggestions are illustrative
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function Dot({ delay = 0 }: { delay?: number }) {
+  return (
+    <span
+      className="block size-1.5 animate-pulse-dot rounded-full bg-coral"
+      style={{ animationDelay: `${delay}ms` }}
+    />
+  );
+}
+
+function MessageBubble({ message }: { message: UIMessage }) {
+  const text = message.parts
+    .map((p) => (p.type === "text" ? p.text : ""))
+    .join("");
+  const isUser = message.role === "user";
+
+  if (isUser) {
+    return (
+      <div className="flex animate-slide-up justify-end">
+        <div className="max-w-[85%] rounded-2xl rounded-br-sm bg-coral px-4 py-3 text-base font-semibold text-white shadow-coral">
+          {text}
         </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex animate-slide-up gap-3">
+      <span className="mt-1 grid size-8 shrink-0 place-items-center rounded-xl bg-gradient-ai text-white ring-ai">
+        <Sparkles className="size-4" aria-hidden />
+      </span>
+      <div className="perx-prose max-w-[85%] flex-1 rounded-2xl rounded-bl-sm border-2 border-border bg-card px-5 py-4 text-[15px] leading-relaxed text-navy shadow-soft">
+        <ReactMarkdown>{text || "…"}</ReactMarkdown>
       </div>
     </div>
   );
