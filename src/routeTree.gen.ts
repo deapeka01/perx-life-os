@@ -9,38 +9,264 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProviderRouteImport } from './routes/provider'
+import { Route as EmployeeRouteImport } from './routes/employee'
+import { Route as CompanyRouteImport } from './routes/company'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProviderIndexRouteImport } from './routes/provider.index'
+import { Route as EmployeeIndexRouteImport } from './routes/employee.index'
+import { Route as CompanyIndexRouteImport } from './routes/company.index'
+import { Route as ProviderServicesRouteImport } from './routes/provider.services'
+import { Route as ProviderMarketingRouteImport } from './routes/provider.marketing'
+import { Route as ProviderDemandRouteImport } from './routes/provider.demand'
+import { Route as EmployeeTeamRouteImport } from './routes/employee.team'
+import { Route as EmployeeQuestsRouteImport } from './routes/employee.quests'
+import { Route as EmployeeProfileRouteImport } from './routes/employee.profile'
+import { Route as EmployeeDiscoverRouteImport } from './routes/employee.discover'
+import { Route as EmployeeConciergeRouteImport } from './routes/employee.concierge'
+import { Route as CompanyEmployeesRouteImport } from './routes/company.employees'
+import { Route as CompanyApprovalsRouteImport } from './routes/company.approvals'
+import { Route as CompanyAnalyticsRouteImport } from './routes/company.analytics'
 
+const ProviderRoute = ProviderRouteImport.update({
+  id: '/provider',
+  path: '/provider',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployeeRoute = EmployeeRouteImport.update({
+  id: '/employee',
+  path: '/employee',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompanyRoute = CompanyRouteImport.update({
+  id: '/company',
+  path: '/company',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProviderIndexRoute = ProviderIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProviderRoute,
+} as any)
+const EmployeeIndexRoute = EmployeeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const CompanyIndexRoute = CompanyIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CompanyRoute,
+} as any)
+const ProviderServicesRoute = ProviderServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => ProviderRoute,
+} as any)
+const ProviderMarketingRoute = ProviderMarketingRouteImport.update({
+  id: '/marketing',
+  path: '/marketing',
+  getParentRoute: () => ProviderRoute,
+} as any)
+const ProviderDemandRoute = ProviderDemandRouteImport.update({
+  id: '/demand',
+  path: '/demand',
+  getParentRoute: () => ProviderRoute,
+} as any)
+const EmployeeTeamRoute = EmployeeTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeQuestsRoute = EmployeeQuestsRouteImport.update({
+  id: '/quests',
+  path: '/quests',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeProfileRoute = EmployeeProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeDiscoverRoute = EmployeeDiscoverRouteImport.update({
+  id: '/discover',
+  path: '/discover',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeConciergeRoute = EmployeeConciergeRouteImport.update({
+  id: '/concierge',
+  path: '/concierge',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const CompanyEmployeesRoute = CompanyEmployeesRouteImport.update({
+  id: '/employees',
+  path: '/employees',
+  getParentRoute: () => CompanyRoute,
+} as any)
+const CompanyApprovalsRoute = CompanyApprovalsRouteImport.update({
+  id: '/approvals',
+  path: '/approvals',
+  getParentRoute: () => CompanyRoute,
+} as any)
+const CompanyAnalyticsRoute = CompanyAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => CompanyRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/company': typeof CompanyRouteWithChildren
+  '/employee': typeof EmployeeRouteWithChildren
+  '/provider': typeof ProviderRouteWithChildren
+  '/company/analytics': typeof CompanyAnalyticsRoute
+  '/company/approvals': typeof CompanyApprovalsRoute
+  '/company/employees': typeof CompanyEmployeesRoute
+  '/employee/concierge': typeof EmployeeConciergeRoute
+  '/employee/discover': typeof EmployeeDiscoverRoute
+  '/employee/profile': typeof EmployeeProfileRoute
+  '/employee/quests': typeof EmployeeQuestsRoute
+  '/employee/team': typeof EmployeeTeamRoute
+  '/provider/demand': typeof ProviderDemandRoute
+  '/provider/marketing': typeof ProviderMarketingRoute
+  '/provider/services': typeof ProviderServicesRoute
+  '/company/': typeof CompanyIndexRoute
+  '/employee/': typeof EmployeeIndexRoute
+  '/provider/': typeof ProviderIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/company/analytics': typeof CompanyAnalyticsRoute
+  '/company/approvals': typeof CompanyApprovalsRoute
+  '/company/employees': typeof CompanyEmployeesRoute
+  '/employee/concierge': typeof EmployeeConciergeRoute
+  '/employee/discover': typeof EmployeeDiscoverRoute
+  '/employee/profile': typeof EmployeeProfileRoute
+  '/employee/quests': typeof EmployeeQuestsRoute
+  '/employee/team': typeof EmployeeTeamRoute
+  '/provider/demand': typeof ProviderDemandRoute
+  '/provider/marketing': typeof ProviderMarketingRoute
+  '/provider/services': typeof ProviderServicesRoute
+  '/company': typeof CompanyIndexRoute
+  '/employee': typeof EmployeeIndexRoute
+  '/provider': typeof ProviderIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/company': typeof CompanyRouteWithChildren
+  '/employee': typeof EmployeeRouteWithChildren
+  '/provider': typeof ProviderRouteWithChildren
+  '/company/analytics': typeof CompanyAnalyticsRoute
+  '/company/approvals': typeof CompanyApprovalsRoute
+  '/company/employees': typeof CompanyEmployeesRoute
+  '/employee/concierge': typeof EmployeeConciergeRoute
+  '/employee/discover': typeof EmployeeDiscoverRoute
+  '/employee/profile': typeof EmployeeProfileRoute
+  '/employee/quests': typeof EmployeeQuestsRoute
+  '/employee/team': typeof EmployeeTeamRoute
+  '/provider/demand': typeof ProviderDemandRoute
+  '/provider/marketing': typeof ProviderMarketingRoute
+  '/provider/services': typeof ProviderServicesRoute
+  '/company/': typeof CompanyIndexRoute
+  '/employee/': typeof EmployeeIndexRoute
+  '/provider/': typeof ProviderIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/company'
+    | '/employee'
+    | '/provider'
+    | '/company/analytics'
+    | '/company/approvals'
+    | '/company/employees'
+    | '/employee/concierge'
+    | '/employee/discover'
+    | '/employee/profile'
+    | '/employee/quests'
+    | '/employee/team'
+    | '/provider/demand'
+    | '/provider/marketing'
+    | '/provider/services'
+    | '/company/'
+    | '/employee/'
+    | '/provider/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/company/analytics'
+    | '/company/approvals'
+    | '/company/employees'
+    | '/employee/concierge'
+    | '/employee/discover'
+    | '/employee/profile'
+    | '/employee/quests'
+    | '/employee/team'
+    | '/provider/demand'
+    | '/provider/marketing'
+    | '/provider/services'
+    | '/company'
+    | '/employee'
+    | '/provider'
+  id:
+    | '__root__'
+    | '/'
+    | '/company'
+    | '/employee'
+    | '/provider'
+    | '/company/analytics'
+    | '/company/approvals'
+    | '/company/employees'
+    | '/employee/concierge'
+    | '/employee/discover'
+    | '/employee/profile'
+    | '/employee/quests'
+    | '/employee/team'
+    | '/provider/demand'
+    | '/provider/marketing'
+    | '/provider/services'
+    | '/company/'
+    | '/employee/'
+    | '/provider/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CompanyRoute: typeof CompanyRouteWithChildren
+  EmployeeRoute: typeof EmployeeRouteWithChildren
+  ProviderRoute: typeof ProviderRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/provider': {
+      id: '/provider'
+      path: '/provider'
+      fullPath: '/provider'
+      preLoaderRoute: typeof ProviderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employee': {
+      id: '/employee'
+      path: '/employee'
+      fullPath: '/employee'
+      preLoaderRoute: typeof EmployeeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/company': {
+      id: '/company'
+      path: '/company'
+      fullPath: '/company'
+      preLoaderRoute: typeof CompanyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +274,170 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/provider/': {
+      id: '/provider/'
+      path: '/'
+      fullPath: '/provider/'
+      preLoaderRoute: typeof ProviderIndexRouteImport
+      parentRoute: typeof ProviderRoute
+    }
+    '/employee/': {
+      id: '/employee/'
+      path: '/'
+      fullPath: '/employee/'
+      preLoaderRoute: typeof EmployeeIndexRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/company/': {
+      id: '/company/'
+      path: '/'
+      fullPath: '/company/'
+      preLoaderRoute: typeof CompanyIndexRouteImport
+      parentRoute: typeof CompanyRoute
+    }
+    '/provider/services': {
+      id: '/provider/services'
+      path: '/services'
+      fullPath: '/provider/services'
+      preLoaderRoute: typeof ProviderServicesRouteImport
+      parentRoute: typeof ProviderRoute
+    }
+    '/provider/marketing': {
+      id: '/provider/marketing'
+      path: '/marketing'
+      fullPath: '/provider/marketing'
+      preLoaderRoute: typeof ProviderMarketingRouteImport
+      parentRoute: typeof ProviderRoute
+    }
+    '/provider/demand': {
+      id: '/provider/demand'
+      path: '/demand'
+      fullPath: '/provider/demand'
+      preLoaderRoute: typeof ProviderDemandRouteImport
+      parentRoute: typeof ProviderRoute
+    }
+    '/employee/team': {
+      id: '/employee/team'
+      path: '/team'
+      fullPath: '/employee/team'
+      preLoaderRoute: typeof EmployeeTeamRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/quests': {
+      id: '/employee/quests'
+      path: '/quests'
+      fullPath: '/employee/quests'
+      preLoaderRoute: typeof EmployeeQuestsRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/profile': {
+      id: '/employee/profile'
+      path: '/profile'
+      fullPath: '/employee/profile'
+      preLoaderRoute: typeof EmployeeProfileRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/discover': {
+      id: '/employee/discover'
+      path: '/discover'
+      fullPath: '/employee/discover'
+      preLoaderRoute: typeof EmployeeDiscoverRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/concierge': {
+      id: '/employee/concierge'
+      path: '/concierge'
+      fullPath: '/employee/concierge'
+      preLoaderRoute: typeof EmployeeConciergeRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/company/employees': {
+      id: '/company/employees'
+      path: '/employees'
+      fullPath: '/company/employees'
+      preLoaderRoute: typeof CompanyEmployeesRouteImport
+      parentRoute: typeof CompanyRoute
+    }
+    '/company/approvals': {
+      id: '/company/approvals'
+      path: '/approvals'
+      fullPath: '/company/approvals'
+      preLoaderRoute: typeof CompanyApprovalsRouteImport
+      parentRoute: typeof CompanyRoute
+    }
+    '/company/analytics': {
+      id: '/company/analytics'
+      path: '/analytics'
+      fullPath: '/company/analytics'
+      preLoaderRoute: typeof CompanyAnalyticsRouteImport
+      parentRoute: typeof CompanyRoute
+    }
   }
 }
 
+interface CompanyRouteChildren {
+  CompanyAnalyticsRoute: typeof CompanyAnalyticsRoute
+  CompanyApprovalsRoute: typeof CompanyApprovalsRoute
+  CompanyEmployeesRoute: typeof CompanyEmployeesRoute
+  CompanyIndexRoute: typeof CompanyIndexRoute
+}
+
+const CompanyRouteChildren: CompanyRouteChildren = {
+  CompanyAnalyticsRoute: CompanyAnalyticsRoute,
+  CompanyApprovalsRoute: CompanyApprovalsRoute,
+  CompanyEmployeesRoute: CompanyEmployeesRoute,
+  CompanyIndexRoute: CompanyIndexRoute,
+}
+
+const CompanyRouteWithChildren =
+  CompanyRoute._addFileChildren(CompanyRouteChildren)
+
+interface EmployeeRouteChildren {
+  EmployeeConciergeRoute: typeof EmployeeConciergeRoute
+  EmployeeDiscoverRoute: typeof EmployeeDiscoverRoute
+  EmployeeProfileRoute: typeof EmployeeProfileRoute
+  EmployeeQuestsRoute: typeof EmployeeQuestsRoute
+  EmployeeTeamRoute: typeof EmployeeTeamRoute
+  EmployeeIndexRoute: typeof EmployeeIndexRoute
+}
+
+const EmployeeRouteChildren: EmployeeRouteChildren = {
+  EmployeeConciergeRoute: EmployeeConciergeRoute,
+  EmployeeDiscoverRoute: EmployeeDiscoverRoute,
+  EmployeeProfileRoute: EmployeeProfileRoute,
+  EmployeeQuestsRoute: EmployeeQuestsRoute,
+  EmployeeTeamRoute: EmployeeTeamRoute,
+  EmployeeIndexRoute: EmployeeIndexRoute,
+}
+
+const EmployeeRouteWithChildren = EmployeeRoute._addFileChildren(
+  EmployeeRouteChildren,
+)
+
+interface ProviderRouteChildren {
+  ProviderDemandRoute: typeof ProviderDemandRoute
+  ProviderMarketingRoute: typeof ProviderMarketingRoute
+  ProviderServicesRoute: typeof ProviderServicesRoute
+  ProviderIndexRoute: typeof ProviderIndexRoute
+}
+
+const ProviderRouteChildren: ProviderRouteChildren = {
+  ProviderDemandRoute: ProviderDemandRoute,
+  ProviderMarketingRoute: ProviderMarketingRoute,
+  ProviderServicesRoute: ProviderServicesRoute,
+  ProviderIndexRoute: ProviderIndexRoute,
+}
+
+const ProviderRouteWithChildren = ProviderRoute._addFileChildren(
+  ProviderRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CompanyRoute: CompanyRouteWithChildren,
+  EmployeeRoute: EmployeeRouteWithChildren,
+  ProviderRoute: ProviderRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
