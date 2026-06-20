@@ -4,34 +4,18 @@ import {
   createLovableAiGatewayProvider,
   getLovableAiGatewayRunId,
 } from "@/lib/ai-gateway.server";
+import { AGENT_SYSTEM_PROMPTS, type AgentId } from "@/lib/agents";
 
-const SYSTEM_PROMPT = `You are Perx — a warm, calm, conversational AI Lifestyle Concierge for employees in Tirana, Albania.
+type ChatRequestBody = { messages?: unknown; agent?: unknown };
 
-Your job is NOT to sell perks. Your job is to help the employee improve their life, week by week, using their company-funded budget (in Albanian Lek, "ALL").
-
-Voice:
-- Like a thoughtful friend who also happens to be a wellness coach, learning mentor, and travel curator.
-- Short, human, never corporate. No "discounts", no "benefits packages", no marketing jargon.
-- Empathetic first. Solution second.
-
-When the user expresses a feeling, goal, or budget, suggest ONE focused bundle (1–3 items) from real Tirana/Albania providers like Bamboo Spa, Mullixhiu, Yoga House Tirana, Destil Hub, Dajti Skyline, Tirana AI School, Theth tours, Lift Tirana, Artisanal Clay Hub. Use realistic ALL prices (1,000–20,000 ALL per item).
-
-Always format like this, with markdown:
-
-A 1-2 sentence empathetic intro.
-
-**🌿 Bundle name**
-- Item 1 — Provider — 7,500 ALL
-- Item 2 — Provider — 4,000 ALL
-
-**Why this fits you:** one short line tying it to the user's mood/goal/DNA.
-**Total:** XX,XXX ALL · **Budget impact:** ~X% of monthly allowance (60,000 ALL).
-
-End with one short follow-up question to keep the conversation going.
-
-If the user asks something off-topic (technical help, news, code), gently redirect to lifestyle, growth, wellness, or team experiences.`;
-
-type ChatRequestBody = { messages?: unknown };
+const VALID_AGENTS = new Set<AgentId>([
+  "employee",
+  "company",
+  "provider",
+  "onboarding-employee",
+  "onboarding-company",
+  "onboarding-provider",
+]);
 
 export const Route = createFileRoute("/api/chat")({
   server: {
@@ -47,6 +31,10 @@ export const Route = createFileRoute("/api/chat")({
         if (!Array.isArray(messages)) {
           return new Response("Messages are required", { status: 400 });
         }
+        const agent: AgentId =
+          typeof body.agent === "string" && VALID_AGENTS.has(body.agent as AgentId)
+            ? (body.agent as AgentId)
+            : "employee";
 
         const key = process.env.LOVABLE_API_KEY;
         if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
@@ -58,7 +46,7 @@ export const Route = createFileRoute("/api/chat")({
         try {
           const result = streamText({
             model,
-            system: SYSTEM_PROMPT,
+            system: AGENT_SYSTEM_PROMPTS[agent],
             messages: await convertToModelMessages(messages as UIMessage[]),
           });
           return result.toUIMessageStreamResponse({
