@@ -250,6 +250,88 @@ export const decideRequest = createServerFn({ method: "POST" })
     return updated;
   });
 
+// ─────────────────────── DIRECT CLAIM (debit employee wallet) ───────────────────────
+export const claimOffer = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({
+    offer_id: z.string().uuid().optional(),
+    provider_id: z.string().uuid().optional(),
+    title: z.string().min(2).max(200),
+    amount_all: z.number().int().positive().max(10_000_000),
+  }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const admin = sb(supabaseAdmin);
+
+    // 1) Check + debit employee wallet
+    const ew = await admin.from("wallets").select("id,balance_all")
+      .eq("owner_user_id", userId).eq("kind", "employee").maybeSingle();
+    if (!ew.data) throw new Error("Wallet not found");
+    if (ew.data.balance_all < data.amount_all) {
+      throw new Error(`Insufficient balance. You have ${ew.data.balance_all.toLocaleString()} ALL.`);
+    }
+    const newBal = ew.data.balance_all - data.amount_all;
+    await admin.from("wallets").update({ balance_all: newBal }).eq("id", ew.data.id);
+
+    // 2) Log the request as fulfilled
+    const prof = await admin.from("profiles").select("company_id,full_name").eq("id", userId).maybeSingle();
+    const reqIns = await admin.from("benefit_requests").insert({
+      employee_user_id: userId,
+      company_id: prof.data?.company_id ?? null,
+      offer_id: data.offer_id ?? null,
+      provider_id: data.provider_id ?? null,
+      title: data.title,
+      amount_all: data.amount_all,
+      status: "fulfilled",
+      decided_at: new Date().toISOString(),
+      fulfilled_at: new Date().toISOString(),
+      ai_note: "Direct claim from wallet.",
+    }).select("id").single();
+
+    // 3) Log debit transaction
+    await admin.from("wallet_transactions").insert({
+      wallet_id: ew.data.id, kind: "spend", amount_all: -data.amount_all,
+      balance_after: newBal,
+      description: `Claimed: ${data.title}`,
+      related_request_id: reqIns.data?.id ?? null,
+    });
+
+    // 4) Credit provider wallet & notify
+    if (data.provider_id) {
+      const prov = await admin.from("providers").select("owner_user_id,name").eq("id", data.provider_id).maybeSingle();
+      if (prov.data?.owner_user_id) {
+        const pw = await admin.from("wallets").select("id,balance_all")
+          .eq("owner_user_id", prov.data.owner_user_id).eq("kind", "provider").maybeSingle();
+        if (pw.data) {
+          const nb = pw.data.balance_all + data.amount_all;
+          await admin.from("wallets").update({ balance_all: nb }).eq("id", pw.data.id);
+          await admin.from("wallet_transactions").insert({
+            wallet_id: pw.data.id, kind: "payout", amount_all: data.amount_all,
+            balance_after: nb, description: `Order: ${data.title}`,
+            related_request_id: reqIns.data?.id ?? null,
+          });
+        }
+        await notify(supabaseAdmin, prov.data.owner_user_id, "new_order",
+          `New booking · ${data.title}`,
+          `${prof.data?.full_name ?? "An employee"} claimed your perk. ${data.amount_all.toLocaleString()} ALL inbound.`,
+          { request_id: reqIns.data?.id });
+      }
+      if (data.offer_id) {
+        const o = await admin.from("offers").select("bookings").eq("id", data.offer_id).maybeSingle();
+        if (o.data) await admin.from("offers").update({ bookings: (o.data.bookings ?? 0) + 1 }).eq("id", data.offer_id);
+      }
+    }
+
+    // 5) Notify employee
+    await notify(supabaseAdmin, userId, "perk_claimed",
+      `🎟️ ${data.title} claimed`,
+      `${data.amount_all.toLocaleString()} ALL debited. New balance: ${newBal.toLocaleString()} ALL.`,
+      { request_id: reqIns.data?.id });
+
+    return { ok: true, new_balance: newBal, request_id: reqIns.data?.id };
+  });
+
 // ─────────────────────── QUESTS ───────────────────────
 export const listQuests = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

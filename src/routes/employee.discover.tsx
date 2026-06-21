@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { PageHeader } from "@/components/perx/PageHeader";
 import { Sparkles, Send, Loader2 } from "lucide-react";
-import { listActiveOffers, requestBenefit } from "@/lib/perx/sim.functions";
+import { listActiveOffers, claimOffer, getMyWallet } from "@/lib/perx/sim.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/employee/discover")({
@@ -16,24 +16,29 @@ const CATS = ["All", "Wellness", "Learning", "Adventure", "Dining", "Travel", "W
 
 function Discover() {
   const listFn = useServerFn(listActiveOffers);
-  const reqFn = useServerFn(requestBenefit);
+  const claimFn = useServerFn(claimOffer);
+  const walletFn = useServerFn(getMyWallet);
   const [rows, setRows] = useState<any[]>([]);
+  const [wallet, setWallet] = useState<any>(null);
   const [cat, setCat] = useState("All");
   const [pending, setPending] = useState<string | null>(null);
 
-  useEffect(() => { listFn().then((r) => setRows(r as any[])).catch(() => {}); }, [listFn]);
+  useEffect(() => {
+    listFn().then((r) => setRows(r as any[])).catch(() => {});
+    walletFn().then((w) => setWallet(w)).catch(() => {});
+  }, [listFn, walletFn]);
 
   const filtered = cat === "All" ? rows : rows.filter((o) => o.category === cat);
 
-  const request = async (o: any) => {
+  const claim = async (o: any) => {
     setPending(o.id);
     try {
-      await reqFn({ data: {
+      const res = await claimFn({ data: {
         offer_id: o.id, provider_id: o.provider_id,
         title: o.title, amount_all: o.price_all,
-        ai_note: `Matches your DNA + budget. Provider: ${o.providers?.name ?? "—"}.`,
-      }});
-      toast.success("Sent to your company for approval");
+      }}) as any;
+      setWallet((w: any) => w ? { ...w, balance_all: res.new_balance } : w);
+      toast.success(`Claimed! New balance: ${res.new_balance.toLocaleString()} ALL`);
     } catch (e: any) { toast.error(e?.message ?? "Failed"); }
     finally { setPending(null); }
   };
@@ -41,9 +46,9 @@ function Discover() {
   return (
     <div className="px-5 pb-12 pt-8 sm:px-8 md:px-10 md:pt-12">
       <PageHeader
-        eyebrow={`${filtered.length} picks${cat !== "All" ? ` · ${cat}` : ""}`}
+        eyebrow={`${filtered.length} picks${cat !== "All" ? ` · ${cat}` : ""}${wallet ? ` · Wallet ${wallet.balance_all.toLocaleString()} ALL` : ""}`}
         title="Discover"
-        subtitle="Tap Request to send a benefit straight to your company for approval. Funds drop into your wallet on approval."
+        subtitle="Tap Claim to spend directly from your wallet. Funds transfer to the provider instantly."
       />
 
       <div className="-mx-5 mt-6 flex gap-2 overflow-x-auto px-5 pb-1 md:-mx-10 md:flex-wrap md:px-10">
@@ -79,10 +84,10 @@ function Discover() {
                 <p className="mt-1 line-clamp-2 text-sm text-navy/65">{o.description ?? ""}</p>
                 <div className="mt-auto flex items-center justify-between pt-3">
                   <p className="font-display text-base font-extrabold text-navy">{fmt(o.price_all)}</p>
-                  <button onClick={() => request(o)} disabled={pending === o.id}
+                  <button onClick={() => claim(o)} disabled={pending === o.id || (wallet && wallet.balance_all < o.price_all)}
                     className="inline-flex items-center gap-1 rounded-xl bg-coral px-3 py-2 text-xs font-extrabold text-white shadow-coral transition hover:brightness-110 disabled:opacity-50">
                     {pending === o.id ? <Loader2 className="size-3 animate-spin" /> : <Send className="size-3" />}
-                    Request
+                    {wallet && wallet.balance_all < o.price_all ? "Low balance" : "Claim"}
                   </button>
                 </div>
               </div>
