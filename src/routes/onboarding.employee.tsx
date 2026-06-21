@@ -155,9 +155,14 @@ function EmployeeOnboarding() {
                 ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your answer…"
+                placeholder="Type or tap the mic to speak…"
                 disabled={isBusy}
                 className="flex-1 bg-transparent px-4 py-3 text-base font-medium text-navy placeholder:text-navy/45 focus:outline-none"
+              />
+              <MicButton
+                disabled={isBusy}
+                onTranscript={(text) => void onSubmit(text)}
+                onError={(msg) => toast.error(msg)}
               />
               <button
                 type="submit"
@@ -167,6 +172,7 @@ function EmployeeOnboarding() {
               >
                 <Send className="size-4" />
               </button>
+
             </form>
           </div>
         </section>
