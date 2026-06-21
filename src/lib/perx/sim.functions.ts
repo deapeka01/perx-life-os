@@ -63,9 +63,35 @@ export const listActiveOffers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { data } = await sb(context.supabase).from("offers")
-      .select("id,title,description,category,price_all,kind,image_url,provider_id,bookings,providers(name,category,logo_url)")
+      .select("id,title,description,category,price_all,kind,image_url,provider_id,bookings,tags,metadata,providers(name,category,logo_url,description,city)")
       .eq("status", "active").order("created_at", { ascending: false }).limit(50);
-    return (data ?? []) as any[];
+    const offers = (data ?? []) as any[];
+    if (!offers.length) return offers;
+    const ids = offers.map((o) => o.id);
+    const [likes, mine] = await Promise.all([
+      sb(context.supabase).from("offer_likes").select("offer_id").in("offer_id", ids),
+      sb(context.supabase).from("offer_likes").select("offer_id").in("offer_id", ids).eq("user_id", context.userId),
+    ]);
+    const counts = new Map<string, number>();
+    (likes.data ?? []).forEach((r: any) => counts.set(r.offer_id, (counts.get(r.offer_id) ?? 0) + 1));
+    const liked = new Set<string>((mine.data ?? []).map((r: any) => r.offer_id));
+    return offers.map((o) => ({ ...o, like_count: counts.get(o.id) ?? 0, liked_by_me: liked.has(o.id) }));
+  });
+
+export const toggleOfferLike = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ offer_id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const existing = await sb(supabase).from("offer_likes").select("id")
+      .eq("offer_id", data.offer_id).eq("user_id", userId).maybeSingle();
+    if (existing.data) {
+      await sb(supabase).from("offer_likes").delete().eq("id", existing.data.id);
+    } else {
+      await sb(supabase).from("offer_likes").insert({ offer_id: data.offer_id, user_id: userId });
+    }
+    const { data: rows } = await sb(supabase).from("offer_likes").select("id").eq("offer_id", data.offer_id);
+    return { liked: !existing.data, count: (rows ?? []).length };
   });
 
 export const getMyProvider = createServerFn({ method: "GET" })
