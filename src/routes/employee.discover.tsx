@@ -16,24 +16,29 @@ const CATS = ["All", "Wellness", "Learning", "Adventure", "Dining", "Travel", "W
 
 function Discover() {
   const listFn = useServerFn(listActiveOffers);
-  const reqFn = useServerFn(requestBenefit);
+  const claimFn = useServerFn(claimOffer);
+  const walletFn = useServerFn(getMyWallet);
   const [rows, setRows] = useState<any[]>([]);
+  const [wallet, setWallet] = useState<any>(null);
   const [cat, setCat] = useState("All");
   const [pending, setPending] = useState<string | null>(null);
 
-  useEffect(() => { listFn().then((r) => setRows(r as any[])).catch(() => {}); }, [listFn]);
+  useEffect(() => {
+    listFn().then((r) => setRows(r as any[])).catch(() => {});
+    walletFn().then((w) => setWallet(w)).catch(() => {});
+  }, [listFn, walletFn]);
 
   const filtered = cat === "All" ? rows : rows.filter((o) => o.category === cat);
 
-  const request = async (o: any) => {
+  const claim = async (o: any) => {
     setPending(o.id);
     try {
-      await reqFn({ data: {
+      const res = await claimFn({ data: {
         offer_id: o.id, provider_id: o.provider_id,
         title: o.title, amount_all: o.price_all,
-        ai_note: `Matches your DNA + budget. Provider: ${o.providers?.name ?? "—"}.`,
-      }});
-      toast.success("Sent to your company for approval");
+      }}) as any;
+      setWallet((w: any) => w ? { ...w, balance_all: res.new_balance } : w);
+      toast.success(`Claimed! New balance: ${res.new_balance.toLocaleString()} ALL`);
     } catch (e: any) { toast.error(e?.message ?? "Failed"); }
     finally { setPending(null); }
   };
