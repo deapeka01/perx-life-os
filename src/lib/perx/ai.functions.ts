@@ -66,7 +66,7 @@ const ReportSchema = z.object({
     detail: z.string(),
     impact: z.string(),
     action: z.string(),
-  })).min(3).max(5),
+  })),
 });
 
 export const generateStrategyReport = createServerFn({ method: "POST" })
