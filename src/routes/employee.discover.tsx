@@ -84,10 +84,10 @@ function Discover() {
                 <p className="mt-1 line-clamp-2 text-sm text-navy/65">{o.description ?? ""}</p>
                 <div className="mt-auto flex items-center justify-between pt-3">
                   <p className="font-display text-base font-extrabold text-navy">{fmt(o.price_all)}</p>
-                  <button onClick={() => request(o)} disabled={pending === o.id}
+                  <button onClick={() => claim(o)} disabled={pending === o.id || (wallet && wallet.balance_all < o.price_all)}
                     className="inline-flex items-center gap-1 rounded-xl bg-coral px-3 py-2 text-xs font-extrabold text-white shadow-coral transition hover:brightness-110 disabled:opacity-50">
                     {pending === o.id ? <Loader2 className="size-3 animate-spin" /> : <Send className="size-3" />}
-                    Request
+                    {wallet && wallet.balance_all < o.price_all ? "Low balance" : "Claim"}
                   </button>
                 </div>
               </div>
