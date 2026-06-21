@@ -123,7 +123,7 @@ export const updateInvoiceStatus = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const patch: Record<string, unknown> = { status: data.status };
+    const patch: { status: typeof data.status; sent_at?: string; paid_at?: string } = { status: data.status };
     if (data.status === "sent") patch.sent_at = new Date().toISOString();
     if (data.status === "paid") patch.paid_at = new Date().toISOString();
     const { data: row, error } = await supabase
