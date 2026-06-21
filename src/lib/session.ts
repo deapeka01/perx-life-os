@@ -57,7 +57,7 @@ export function roleHomePath(role: Role): "/employee" | "/company" | "/provider"
   return `/${role}` as const;
 }
 
-/** Redeem an invitation code. Assigns role + company on the user's profile. */
+/** Redeem an invitation code via secure server-side RPC. */
 export async function redeemInvitationCode(code: string): Promise<
   { ok: true; role: Role } | { ok: false; error: string }
 > {
@@ -65,37 +65,16 @@ export async function redeemInvitationCode(code: string): Promise<
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Not signed in" };
 
-  const { data: invite, error: invErr } = await supabase
-    .from("invitation_codes")
-    .select("code, company_id, role, uses_left")
-    .eq("code", normalized)
-    .maybeSingle();
+  const { data, error } = await supabase.rpc("redeem_invitation_code", { _code: normalized });
+  if (error) return { ok: false, error: error.message };
+  const result = data as { ok: boolean; role?: Role; error?: string } | null;
+  if (!result?.ok) return { ok: false, error: result?.error ?? "Invalid or expired code." };
 
-  if (invErr || !invite || invite.uses_left <= 0) {
-    return { ok: false, error: "Invalid or expired code." };
-  }
-
-  const role = invite.role as Role;
-
-  const { error: profErr } = await supabase
-    .from("profiles")
-    .update({ company_id: invite.company_id })
-    .eq("id", user.id);
-  if (profErr) return { ok: false, error: profErr.message };
-
-  // Replace role
-  await supabase.from("user_roles").delete().eq("user_id", user.id);
-  await supabase.from("user_roles").insert({ user_id: user.id, role });
-
-  // Decrement uses_left (best-effort)
-  await supabase
-    .from("invitation_codes")
-    .update({ uses_left: invite.uses_left - 1 })
-    .eq("code", normalized);
-
+  const role = result.role as Role;
   cacheRole(role);
   return { ok: true, role };
 }
+
 
 /** Persist onboarding payload to the database (upsert per user). */
 export async function saveOnboarding(payload: Record<string, unknown>) {
