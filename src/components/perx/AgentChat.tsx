@@ -8,7 +8,9 @@ import ReactMarkdown from "react-markdown";
 import { AGENTS, type AgentId } from "@/lib/agents";
 import { AIOrb } from "@/components/perx/AIOrb";
 import { MicButton } from "@/components/perx/MicButton";
+import { PerkPicksDialog, pickFor, shouldOpenPicks } from "@/components/perx/PerkPicksDialog";
 import { toast } from "sonner";
+
 
 
 type Props = {
@@ -41,6 +43,9 @@ export function AgentChat({
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const seededRef = useRef(false);
+  const [picksOpen, setPicksOpen] = useState(false);
+  const [picksQuery, setPicksQuery] = useState("");
+
 
   const { messages, sendMessage, status, error } = useChat({
     transport,
@@ -74,7 +79,12 @@ export function AgentChat({
     if (!t || isBusy) return;
     setInput("");
     await sendMessage({ text: t });
+    if (agent === "employee" && shouldOpenPicks(t)) {
+      setPicksQuery(t);
+      setPicksOpen(true);
+    }
   };
+
 
   const usedStarters = starters ?? meta.starters;
   const usedGreeting = greeting ?? meta.greeting;
@@ -189,9 +199,19 @@ export function AgentChat({
           {rightRail}
         </aside>
       )}
+
+      {agent === "employee" && (
+        <PerkPicksDialog
+          open={picksOpen}
+          onOpenChange={setPicksOpen}
+          query={picksQuery}
+          picks={pickFor(picksQuery)}
+        />
+      )}
     </div>
   );
 }
+
 
 function Dot({ delay = 0 }: { delay?: number }) {
   return (
