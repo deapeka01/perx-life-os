@@ -1,11 +1,13 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { RoleTopBar } from "@/components/perx/RoleTopBar";
+import { useBootstrap } from "@/lib/perx/useBootstrap";
 
 export const Route = createFileRoute("/provider")({
   component: ProviderLayout,
 });
 
 function ProviderLayout() {
+  useBootstrap();
   return (
     <div className="relative flex min-h-dvh flex-col bg-canvas text-navy">
       <div
