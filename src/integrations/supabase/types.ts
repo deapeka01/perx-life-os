@@ -56,23 +56,215 @@ export type Database = {
         }
         Relationships: []
       }
+      benefit_dna: {
+        Row: {
+          archetypes: Json
+          created_at: string
+          goals: Json
+          interests: Json
+          primary_archetype: string
+          raw: Json
+          recommended_categories: Json
+          secondary_archetype: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          archetypes?: Json
+          created_at?: string
+          goals?: Json
+          interests?: Json
+          primary_archetype: string
+          raw?: Json
+          recommended_categories?: Json
+          secondary_archetype?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          archetypes?: Json
+          created_at?: string
+          goals?: Json
+          interests?: Json
+          primary_archetype?: string
+          raw?: Json
+          recommended_categories?: Json
+          secondary_archetype?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      benefit_requests: {
+        Row: {
+          ai_note: string | null
+          amount_all: number
+          company_id: string | null
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          decision_note: string | null
+          employee_message: string | null
+          employee_user_id: string
+          fulfilled_at: string | null
+          id: string
+          metadata: Json
+          offer_id: string | null
+          provider_id: string | null
+          status: Database["public"]["Enums"]["request_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          ai_note?: string | null
+          amount_all: number
+          company_id?: string | null
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_note?: string | null
+          employee_message?: string | null
+          employee_user_id: string
+          fulfilled_at?: string | null
+          id?: string
+          metadata?: Json
+          offer_id?: string | null
+          provider_id?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          ai_note?: string | null
+          amount_all?: number
+          company_id?: string | null
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_note?: string | null
+          employee_message?: string | null
+          employee_user_id?: string
+          fulfilled_at?: string | null
+          id?: string
+          metadata?: Json
+          offer_id?: string | null
+          provider_id?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "benefit_requests_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "benefit_requests_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "benefit_requests_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           created_at: string
+          description: string | null
           id: string
+          industry: string | null
+          logo_url: string | null
+          monthly_budget_all: number
           name: string
+          owner_user_id: string | null
+          registration_number: string | null
+          tax_number: string | null
+          updated_at: string
+          verification_status: Database["public"]["Enums"]["verification_status"]
         }
         Insert: {
           created_at?: string
+          description?: string | null
           id?: string
+          industry?: string | null
+          logo_url?: string | null
+          monthly_budget_all?: number
           name: string
+          owner_user_id?: string | null
+          registration_number?: string | null
+          tax_number?: string | null
+          updated_at?: string
+          verification_status?: Database["public"]["Enums"]["verification_status"]
         }
         Update: {
           created_at?: string
+          description?: string | null
           id?: string
+          industry?: string | null
+          logo_url?: string | null
+          monthly_budget_all?: number
           name?: string
+          owner_user_id?: string | null
+          registration_number?: string | null
+          tax_number?: string | null
+          updated_at?: string
+          verification_status?: Database["public"]["Enums"]["verification_status"]
         }
         Relationships: []
+      }
+      demand_insights: {
+        Row: {
+          category: string
+          employees_interested: number
+          generated_at: string
+          headline: string | null
+          id: string
+          provider_id: string | null
+          recommendation: string | null
+          segment: string
+          trend: string | null
+        }
+        Insert: {
+          category: string
+          employees_interested?: number
+          generated_at?: string
+          headline?: string | null
+          id?: string
+          provider_id?: string | null
+          recommendation?: string | null
+          segment: string
+          trend?: string | null
+        }
+        Update: {
+          category?: string
+          employees_interested?: number
+          generated_at?: string
+          headline?: string | null
+          id?: string
+          provider_id?: string | null
+          recommendation?: string | null
+          segment?: string
+          trend?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demand_insights_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       invitation_codes: {
         Row: {
@@ -169,6 +361,154 @@ export type Database = {
         }
         Relationships: []
       }
+      marketing_campaigns: {
+        Row: {
+          analytics: Json
+          channel: Database["public"]["Enums"]["campaign_channel"]
+          content: string
+          created_at: string
+          id: string
+          image_url: string | null
+          provider_id: string
+          scheduled_for: string | null
+          status: Database["public"]["Enums"]["campaign_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          analytics?: Json
+          channel: Database["public"]["Enums"]["campaign_channel"]
+          content: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          provider_id: string
+          scheduled_for?: string | null
+          status?: Database["public"]["Enums"]["campaign_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          analytics?: Json
+          channel?: Database["public"]["Enums"]["campaign_channel"]
+          content?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          provider_id?: string
+          scheduled_for?: string | null
+          status?: Database["public"]["Enums"]["campaign_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketing_campaigns_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          action_url: string | null
+          body: string | null
+          created_at: string
+          id: string
+          kind: string
+          metadata: Json
+          read: boolean
+          title: string
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          body?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          metadata?: Json
+          read?: boolean
+          title: string
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          body?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          metadata?: Json
+          read?: boolean
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      offers: {
+        Row: {
+          bookings: number
+          capacity: number | null
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          kind: Database["public"]["Enums"]["offer_kind"]
+          metadata: Json
+          price_all: number
+          provider_id: string
+          status: Database["public"]["Enums"]["offer_status"]
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          bookings?: number
+          capacity?: number | null
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          kind?: Database["public"]["Enums"]["offer_kind"]
+          metadata?: Json
+          price_all: number
+          provider_id: string
+          status?: Database["public"]["Enums"]["offer_status"]
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          bookings?: number
+          capacity?: number | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          kind?: Database["public"]["Enums"]["offer_kind"]
+          metadata?: Json
+          price_all?: number
+          provider_id?: string
+          status?: Database["public"]["Enums"]["offer_status"]
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offers_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       onboarding_responses: {
         Row: {
           created_at: string
@@ -237,6 +577,186 @@ export type Database = {
           },
         ]
       }
+      providers: {
+        Row: {
+          brand: Json
+          category: string
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          owner_user_id: string | null
+          registration_number: string | null
+          social: Json
+          tax_number: string | null
+          updated_at: string
+          verification_status: Database["public"]["Enums"]["verification_status"]
+        }
+        Insert: {
+          brand?: Json
+          category: string
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          owner_user_id?: string | null
+          registration_number?: string | null
+          social?: Json
+          tax_number?: string | null
+          updated_at?: string
+          verification_status?: Database["public"]["Enums"]["verification_status"]
+        }
+        Update: {
+          brand?: Json
+          category?: string
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          owner_user_id?: string | null
+          registration_number?: string | null
+          social?: Json
+          tax_number?: string | null
+          updated_at?: string
+          verification_status?: Database["public"]["Enums"]["verification_status"]
+        }
+        Relationships: []
+      }
+      quest_progress: {
+        Row: {
+          claimed_at: string | null
+          completed_at: string | null
+          created_at: string
+          id: string
+          progress: number
+          quest_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          claimed_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          progress?: number
+          quest_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          claimed_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          progress?: number
+          quest_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quest_progress_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quests: {
+        Row: {
+          active: boolean
+          badge_emoji: string | null
+          category: string | null
+          company_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          reward_all: number
+          scope: Database["public"]["Enums"]["quest_scope"]
+          target_progress: number
+          title: string
+        }
+        Insert: {
+          active?: boolean
+          badge_emoji?: string | null
+          category?: string | null
+          company_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          reward_all?: number
+          scope?: Database["public"]["Enums"]["quest_scope"]
+          target_progress?: number
+          title: string
+        }
+        Update: {
+          active?: boolean
+          badge_emoji?: string | null
+          category?: string | null
+          company_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          reward_all?: number
+          scope?: Database["public"]["Enums"]["quest_scope"]
+          target_progress?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quests_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      strategy_reports: {
+        Row: {
+          company_id: string
+          generated_at: string
+          id: string
+          insights: Json
+          kind: string
+          summary: string | null
+          title: string
+        }
+        Insert: {
+          company_id: string
+          generated_at?: string
+          id?: string
+          insights?: Json
+          kind: string
+          summary?: string | null
+          title: string
+        }
+        Update: {
+          company_id?: string
+          generated_at?: string
+          id?: string
+          insights?: Json
+          kind?: string
+          summary?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "strategy_reports_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -252,6 +772,80 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      wallet_transactions: {
+        Row: {
+          amount_all: number
+          balance_after: number
+          created_at: string
+          description: string
+          id: string
+          kind: Database["public"]["Enums"]["txn_kind"]
+          metadata: Json
+          related_request_id: string | null
+          wallet_id: string
+        }
+        Insert: {
+          amount_all: number
+          balance_after: number
+          created_at?: string
+          description: string
+          id?: string
+          kind: Database["public"]["Enums"]["txn_kind"]
+          metadata?: Json
+          related_request_id?: string | null
+          wallet_id: string
+        }
+        Update: {
+          amount_all?: number
+          balance_after?: number
+          created_at?: string
+          description?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["txn_kind"]
+          metadata?: Json
+          related_request_id?: string | null
+          wallet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_transactions_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "wallets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wallets: {
+        Row: {
+          balance_all: number
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["wallet_kind"]
+          monthly_allowance_all: number
+          owner_user_id: string
+          updated_at: string
+        }
+        Insert: {
+          balance_all?: number
+          created_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["wallet_kind"]
+          monthly_allowance_all?: number
+          owner_user_id: string
+          updated_at?: string
+        }
+        Update: {
+          balance_all?: number
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["wallet_kind"]
+          monthly_allowance_all?: number
+          owner_user_id?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -272,8 +866,29 @@ export type Database = {
     }
     Enums: {
       app_role: "employee" | "company" | "provider" | "admin"
+      campaign_channel: "instagram" | "facebook" | "linkedin" | "tiktok"
+      campaign_status: "draft" | "scheduled" | "published"
       invoice_kind: "wallet_topup" | "perk_claim" | "provider_payout"
       invoice_status: "pending" | "sent" | "paid" | "cancelled"
+      offer_kind: "single" | "package" | "bundle"
+      offer_status: "draft" | "active" | "archived"
+      quest_scope: "global" | "company"
+      request_status:
+        | "pending"
+        | "approved"
+        | "rejected"
+        | "fulfilled"
+        | "cancelled"
+      txn_kind:
+        | "topup"
+        | "allocation"
+        | "spend"
+        | "refund"
+        | "payout"
+        | "reward"
+        | "adjustment"
+      verification_status: "pending" | "verified" | "rejected"
+      wallet_kind: "employee" | "company" | "provider"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -402,8 +1017,31 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["employee", "company", "provider", "admin"],
+      campaign_channel: ["instagram", "facebook", "linkedin", "tiktok"],
+      campaign_status: ["draft", "scheduled", "published"],
       invoice_kind: ["wallet_topup", "perk_claim", "provider_payout"],
       invoice_status: ["pending", "sent", "paid", "cancelled"],
+      offer_kind: ["single", "package", "bundle"],
+      offer_status: ["draft", "active", "archived"],
+      quest_scope: ["global", "company"],
+      request_status: [
+        "pending",
+        "approved",
+        "rejected",
+        "fulfilled",
+        "cancelled",
+      ],
+      txn_kind: [
+        "topup",
+        "allocation",
+        "spend",
+        "refund",
+        "payout",
+        "reward",
+        "adjustment",
+      ],
+      verification_status: ["pending", "verified", "rejected"],
+      wallet_kind: ["employee", "company", "provider"],
     },
   },
 } as const
