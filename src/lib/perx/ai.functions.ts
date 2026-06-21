@@ -113,6 +113,47 @@ const PostSchema = z.object({
   linkedin_body: z.string(),
 });
 
+type MarketingCampaignOutput = z.infer<typeof PostSchema>;
+
+const textOr = (value: unknown, fallback: string) => typeof value === "string" && value.trim() ? value.trim() : fallback;
+const tagsOr = (value: unknown) => Array.isArray(value)
+  ? value.map((tag) => String(tag).replace(/^#/, "").trim()).filter(Boolean).slice(0, 8)
+  : ["PerxBenefits", "TiranaTeams", "CorporateWellbeing"];
+
+function fallbackCampaign(provider: any, theme: string): MarketingCampaignOutput {
+  const providerName = provider?.name ?? "Perx Provider";
+  const category = provider?.category ?? "wellbeing";
+  return {
+    campaign_title: `${providerName} · ${theme.slice(0, 48)}`,
+    instagram_caption: `${providerName} brings ${category} benefits closer to Tirana teams. ${theme}. Rezervo eksperiencën dhe jepi ekipit një arsye të ndihet më mirë këtë javë.`,
+    instagram_hashtags: ["PerxBenefits", "TiranaTeams", "CorporateWellbeing"],
+    facebook_headline: `${providerName} for better employee days`,
+    facebook_body: `A practical ${category} perk for companies that want happier, healthier teams in Albania. ${theme}. Available through Perx for fast employee claims and measurable engagement.`,
+    linkedin_headline: `A smarter ${category} benefit for Albanian teams`,
+    linkedin_body: `${providerName} helps HR leaders turn benefits into real employee engagement. This campaign focuses on ${theme}, designed for corporate teams in Tirana that value retention, wellbeing, and clear outcomes.`,
+  };
+}
+
+function parseMarketingCampaign(raw: string, provider: any, theme: string): MarketingCampaignOutput {
+  const fallback = fallbackCampaign(provider, theme);
+  try {
+    const cleaned = raw.replace(/```json|```/g, "").trim();
+    const match = cleaned.match(/\{[\s\S]*\}/);
+    const parsed = JSON.parse(match?.[0] ?? cleaned) as Partial<Record<keyof MarketingCampaignOutput, unknown>>;
+    return {
+      campaign_title: textOr(parsed.campaign_title, fallback.campaign_title),
+      instagram_caption: textOr(parsed.instagram_caption, fallback.instagram_caption),
+      instagram_hashtags: tagsOr(parsed.instagram_hashtags),
+      facebook_headline: textOr(parsed.facebook_headline, fallback.facebook_headline),
+      facebook_body: textOr(parsed.facebook_body, fallback.facebook_body),
+      linkedin_headline: textOr(parsed.linkedin_headline, fallback.linkedin_headline),
+      linkedin_body: textOr(parsed.linkedin_body, fallback.linkedin_body),
+    };
+  } catch {
+    return fallback;
+  }
+}
+
 export const generateMarketingCampaign = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({
@@ -131,13 +172,12 @@ export const generateMarketingCampaign = createServerFn({ method: "POST" })
       if (o.data) offerCtx = `Offer: ${o.data.title} — ${o.data.description ?? ""} — ${o.data.price_all} ALL (${o.data.category})`;
     }
 
-    const { experimental_output } = await generateText({
+    const { text } = await generateText({
       model: gateway(),
-      experimental_output: Output.object({ schema: PostSchema }),
-      system: "You write social media campaigns for Albanian lifestyle/wellness/learning businesses. Voice: warm, confident, modern. Mix English with occasional Albanian phrases where natural. No emojis spam.",
-      prompt: `Provider: ${prov.data.name} (${prov.data.category}). ${prov.data.description ?? ""}\n${offerCtx}\nTheme: ${data.theme}\n\nCreate Instagram, Facebook, and LinkedIn variants of one cohesive campaign targeting corporate Tirana audiences.`,
+      system: "You write social media campaigns for Albanian lifestyle/wellness/learning businesses. Voice: warm, confident, modern. Mix English with occasional Albanian phrases where natural. No emojis spam. Return only compact JSON, no markdown.",
+      prompt: `Provider: ${prov.data.name} (${prov.data.category}). ${prov.data.description ?? ""}\n${offerCtx}\nTheme: ${data.theme}\n\nCreate one cohesive campaign targeting corporate Tirana audiences. Return a JSON object with exactly these keys: campaign_title, instagram_caption, instagram_hashtags, facebook_headline, facebook_body, linkedin_headline, linkedin_body. instagram_hashtags must be an array of short strings without #.`,
     });
-    const out = experimental_output as z.infer<typeof PostSchema>;
+    const out = parseMarketingCampaign(text, prov.data, data.theme);
 
     // Save the 3 channel posts as separate rows
     const baseAnalytics = {};
