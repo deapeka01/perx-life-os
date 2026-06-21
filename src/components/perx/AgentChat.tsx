@@ -156,10 +156,17 @@ export function AgentChat({
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={`Message ${meta.name}…`}
+              placeholder={`Message or speak to ${meta.name}…`}
               aria-label={`Message ${meta.name}`}
               disabled={isBusy}
               className="flex-1 bg-transparent px-4 py-3 text-base font-medium text-navy placeholder:text-navy/45 focus:outline-none disabled:opacity-60"
+            />
+            <MicButton
+              disabled={isBusy}
+              onTranscript={(text) => {
+                void onSubmit(text);
+              }}
+              onError={(msg) => toast.error(msg)}
             />
             <button
               type="submit"
@@ -171,7 +178,8 @@ export function AgentChat({
             </button>
           </form>
           <p className="mx-auto mt-2 max-w-3xl text-center text-[11px] font-bold uppercase tracking-wider text-navy/40">
-            Powered by Perx AI · responses are illustrative
+            Tap the mic to talk · or type your message
+
           </p>
         </div>
       </div>
