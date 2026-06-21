@@ -1,170 +1,95 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { PageHeader } from "@/components/perx/PageHeader";
-import { discoverFeed, formatALL, perxDrops } from "@/lib/mock-data";
-import { Sparkles } from "lucide-react";
-import { PerxDropCard } from "@/components/perx/PerxDropCard";
+import { Sparkles, Send, Loader2 } from "lucide-react";
+import { listActiveOffers, requestBenefit } from "@/lib/perx/sim.functions";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/employee/discover")({
   head: () => ({ meta: [{ title: "Discover · Perx" }] }),
   component: Discover,
 });
 
-const filters = ["All", "Wellness", "Growth", "Adventure", "Workspace", "Travel", "Food"];
+const fmt = (n: number) => `${n.toLocaleString()} ALL`;
+const CATS = ["All", "Wellness", "Learning", "Adventure", "Dining", "Travel", "Workspace", "Workshop", "Lifestyle"];
 
 function Discover() {
-  const [hero, ...rest] = discoverFeed;
+  const listFn = useServerFn(listActiveOffers);
+  const reqFn = useServerFn(requestBenefit);
+  const [rows, setRows] = useState<any[]>([]);
+  const [cat, setCat] = useState("All");
+  const [pending, setPending] = useState<string | null>(null);
+
+  useEffect(() => { listFn().then((r) => setRows(r as any[])).catch(() => {}); }, [listFn]);
+
+  const filtered = cat === "All" ? rows : rows.filter((o) => o.category === cat);
+
+  const request = async (o: any) => {
+    setPending(o.id);
+    try {
+      await reqFn({ data: {
+        offer_id: o.id, provider_id: o.provider_id,
+        title: o.title, amount_all: o.price_all,
+        ai_note: `Matches your DNA + budget. Provider: ${o.providers?.name ?? "—"}.`,
+      }});
+      toast.success("Sent to your company for approval");
+    } catch (e: any) { toast.error(e?.message ?? "Failed"); }
+    finally { setPending(null); }
+  };
 
   return (
     <div className="px-5 pb-12 pt-8 sm:px-8 md:px-10 md:pt-12">
       <PageHeader
-        eyebrow="For you · 24 picks today"
+        eyebrow={`${filtered.length} picks${cat !== "All" ? ` · ${cat}` : ""}`}
         title="Discover"
-        subtitle="A feed of experiences hand-picked by Perx for your DNA, goals, and budget — not a marketplace."
+        subtitle="Tap Request to send a benefit straight to your company for approval. Funds drop into your wallet on approval."
       />
 
       <div className="-mx-5 mt-6 flex gap-2 overflow-x-auto px-5 pb-1 md:-mx-10 md:flex-wrap md:px-10">
-        {filters.map((f, i) => (
-          <button
-            key={f}
+        {CATS.map((f) => (
+          <button key={f} onClick={() => setCat(f)}
             className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-extrabold transition ${
-              i === 0
-                ? "bg-navy text-white"
-                : "border-2 border-border bg-card text-navy/70 hover:border-navy/20"
-            }`}
-          >
-            {f}
-          </button>
+              cat === f ? "bg-navy text-white" : "border-2 border-border bg-card text-navy/70 hover:border-navy/20"
+            }`}>{f}</button>
         ))}
       </div>
 
-      {/* Hero pick */}
-      <Link
-        to="/employee/concierge"
-        search={{ q: `Tell me more about ${hero.title}` }}
-        className="group mt-8 block overflow-hidden rounded-3xl border-2 border-border bg-card shadow-lift transition hover:-translate-y-1"
-      >
-        <div className="grid md:grid-cols-[1.2fr_1fr]">
-          <div className={`relative aspect-[5/3] overflow-hidden bg-gradient-to-br ${
-            hero.accent === "coral"
-              ? "from-coral/40 via-coral/10 to-transparent"
-              : hero.accent === "sky"
-                ? "from-sky/40 via-sky/10 to-transparent"
-                : "from-emerald/40 via-emerald/10 to-transparent"
-          } md:aspect-auto`}>
-            {hero.image ? (
-              <img
-                src={hero.image}
-                alt={hero.title}
-                width={1024}
-                height={640}
-                className="absolute inset-0 size-full object-cover"
-              />
-            ) : (
-              <span className="absolute inset-0 grid place-items-center text-8xl" aria-hidden>
-                {hero.emoji}
-              </span>
-            )}
-            <span className="absolute left-4 top-4 inline-flex items-center gap-1 rounded-full bg-navy px-3 py-1.5 text-xs font-extrabold text-white shadow-soft">
-              <Sparkles className="size-3.5 text-coral" aria-hidden /> Top pick · {hero.matchScore}% match
-            </span>
-          </div>
-          <div className="flex flex-col justify-between gap-5 p-6 sm:p-8">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-navy/55">
-                {hero.category} · {hero.provider}
-              </p>
-              <h3 className="mt-2 font-display text-2xl font-extrabold text-navy sm:text-3xl">
-                {hero.title}
-              </h3>
-              <p className="mt-3 text-base font-medium text-navy/70">{hero.story}</p>
-            </div>
-            <div className="flex items-end justify-between gap-3">
-              <p className="font-display text-2xl font-extrabold text-navy">
-                {formatALL(hero.priceALL)}
-              </p>
-              <span className="rounded-2xl bg-coral px-5 py-3 font-display text-sm font-extrabold text-white shadow-coral">
-                Talk to Perx →
-              </span>
-            </div>
-          </div>
-        </div>
-      </Link>
-
-      <section className="mt-10">
-        <div className="mb-4">
-          <p className="text-xs font-bold uppercase tracking-widest text-coral">
-            Perx Drops · this week only
-          </p>
-          <h2 className="mt-1 font-display text-xl font-extrabold text-navy sm:text-2xl">
-            Limited experiences
-          </h2>
-        </div>
-        <div className="-mx-5 flex gap-4 overflow-x-auto px-5 pb-2 md:-mx-10 md:grid md:grid-cols-3 md:overflow-visible md:px-10">
-          {perxDrops.map((d) => (
-            <PerxDropCard key={d.id} {...d} />
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-10">
-        <h2 className="mb-4 font-display text-xl font-extrabold text-navy sm:text-2xl">
-          More for you
-        </h2>
+      <section className="mt-8">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {rest.map((d) => (
-            <article
-              key={d.id}
-              className="group flex h-full flex-col overflow-hidden rounded-3xl border-2 border-border bg-card shadow-soft transition hover:-translate-y-1 hover:border-navy/15 hover:shadow-lift"
-            >
-              <div className={`relative aspect-[5/3] overflow-hidden bg-gradient-to-br ${
-                d.accent === "coral"
-                  ? "from-coral/30 via-coral/10 to-transparent"
-                  : d.accent === "sky"
-                    ? "from-sky/30 via-sky/10 to-transparent"
-                    : "from-emerald/30 via-emerald/10 to-transparent"
-              }`}>
-                {d.image ? (
-                  <img
-                    src={d.image}
-                    alt={d.title}
-                    loading="lazy"
-                    width={1024}
-                    height={640}
-                    className="absolute inset-0 size-full object-cover transition duration-500 group-hover:scale-105"
-                  />
+          {filtered.map((o) => (
+            <article key={o.id} className="group flex h-full flex-col overflow-hidden rounded-3xl border-2 border-border bg-card shadow-soft transition hover:-translate-y-1 hover:border-navy/15 hover:shadow-lift">
+              <div className="relative aspect-[5/3] overflow-hidden bg-gradient-to-br from-coral/20 via-sky/10 to-emerald/10">
+                {o.image_url ? (
+                  <img src={o.image_url} alt={o.title} className="absolute inset-0 size-full object-cover" />
                 ) : (
-                  <span className="absolute inset-0 grid place-items-center text-7xl" aria-hidden>
-                    {d.emoji}
+                  <span className="absolute inset-0 grid place-items-center text-5xl font-display font-extrabold text-navy/30">
+                    {o.providers?.name?.[0] ?? "P"}
                   </span>
                 )}
                 <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-navy px-2.5 py-1 text-xs font-extrabold text-white">
-                  <Sparkles className="size-3 text-coral" aria-hidden /> {d.matchScore}% match
+                  <Sparkles className="size-3 text-coral" /> {o.category}
                 </span>
               </div>
               <div className="flex flex-1 flex-col p-5">
                 <p className="text-xs font-bold uppercase tracking-wider text-navy/55">
-                  {d.category} · {d.provider}
+                  {o.providers?.name ?? "Provider"} · {o.kind}
                 </p>
-                <h3 className="mt-1 line-clamp-2 font-display text-lg font-extrabold leading-snug text-navy">
-                  {d.title}
-                </h3>
-                <p className="mt-1 line-clamp-2 text-sm text-navy/65">{d.story}</p>
+                <h3 className="mt-1 line-clamp-2 font-display text-lg font-extrabold leading-snug text-navy">{o.title}</h3>
+                <p className="mt-1 line-clamp-2 text-sm text-navy/65">{o.description ?? ""}</p>
                 <div className="mt-auto flex items-center justify-between pt-3">
-                  <p className="font-display text-base font-extrabold text-navy">
-                    {formatALL(d.priceALL)}
-                  </p>
-                  <Link
-                    to="/employee/concierge"
-                    search={{ q: `Tell me more about ${d.title}` }}
-                    className="text-sm font-extrabold text-coral transition group-hover:translate-x-1"
-                  >
-                    Ask Perx →
-                  </Link>
+                  <p className="font-display text-base font-extrabold text-navy">{fmt(o.price_all)}</p>
+                  <button onClick={() => request(o)} disabled={pending === o.id}
+                    className="inline-flex items-center gap-1 rounded-xl bg-coral px-3 py-2 text-xs font-extrabold text-white shadow-coral transition hover:brightness-110 disabled:opacity-50">
+                    {pending === o.id ? <Loader2 className="size-3 animate-spin" /> : <Send className="size-3" />}
+                    Request
+                  </button>
                 </div>
               </div>
             </article>
           ))}
         </div>
+        {filtered.length === 0 && <p className="mt-10 text-center text-sm text-navy/50">No offers in this category.</p>}
       </section>
     </div>
   );

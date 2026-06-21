@@ -57,7 +57,7 @@ function Approvals() {
         eyebrow={`${pending.length} pending`}
         title="Approval Center"
         subtitle="AI explains every request. One click to approve or reject."
-        rightSlot={
+        actions={
           <button onClick={generate} disabled={genReport}
             className="inline-flex items-center gap-2 rounded-xl bg-navy px-4 py-2 text-sm font-extrabold text-white shadow-soft hover:bg-coral disabled:opacity-50">
             {genReport ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
