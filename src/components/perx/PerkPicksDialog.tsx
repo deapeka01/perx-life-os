@@ -112,7 +112,9 @@ export function PerkPicksDialog({
                             <Check className="size-4" /> Claimed
                           </>
                         ) : (
-                          <>Claim perk →</>
+                          <>
+                            <Banknote className="size-4" /> Pay & claim
+                          </>
                         )}
                       </button>
                     </div>
@@ -122,6 +124,18 @@ export function PerkPicksDialog({
             })}
           </div>
         </div>
+        <PayByBankDialog
+          open={payOpen}
+          onOpenChange={setPayOpen}
+          initial={payInitial}
+          onPaid={() => {
+            // also mark the picked perk as claimed locally for UX
+            if (payInitial) {
+              const match = picks.find((p) => payInitial.description.includes(p.title));
+              if (match) setClaimed((s) => new Set(s).add(match.id));
+            }
+          }}
+        />
       </DialogContent>
     </Dialog>
   );
