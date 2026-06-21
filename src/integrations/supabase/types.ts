@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      bank_accounts: {
+        Row: {
+          bank_name: string
+          beneficiary_name: string
+          created_at: string
+          currency: string
+          iban: string
+          id: string
+          is_default: boolean
+          label: string | null
+          owner_user_id: string
+          swift: string | null
+          updated_at: string
+        }
+        Insert: {
+          bank_name: string
+          beneficiary_name: string
+          created_at?: string
+          currency?: string
+          iban: string
+          id?: string
+          is_default?: boolean
+          label?: string | null
+          owner_user_id: string
+          swift?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bank_name?: string
+          beneficiary_name?: string
+          created_at?: string
+          currency?: string
+          iban?: string
+          id?: string
+          is_default?: boolean
+          label?: string | null
+          owner_user_id?: string
+          swift?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           created_at: string
@@ -63,6 +105,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      invoices: {
+        Row: {
+          amount_all: number
+          bank_snapshot: Json
+          created_at: string
+          description: string
+          due_date: string | null
+          id: string
+          kind: Database["public"]["Enums"]["invoice_kind"]
+          metadata: Json
+          number: string
+          paid_at: string | null
+          payee_label: string
+          payee_user_id: string | null
+          payer_label: string | null
+          payer_user_id: string | null
+          reference_code: string
+          sent_at: string | null
+          status: Database["public"]["Enums"]["invoice_status"]
+          updated_at: string
+        }
+        Insert: {
+          amount_all: number
+          bank_snapshot: Json
+          created_at?: string
+          description: string
+          due_date?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["invoice_kind"]
+          metadata?: Json
+          number: string
+          paid_at?: string | null
+          payee_label: string
+          payee_user_id?: string | null
+          payer_label?: string | null
+          payer_user_id?: string | null
+          reference_code: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          updated_at?: string
+        }
+        Update: {
+          amount_all?: number
+          bank_snapshot?: Json
+          created_at?: string
+          description?: string
+          due_date?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["invoice_kind"]
+          metadata?: Json
+          number?: string
+          paid_at?: string | null
+          payee_label?: string
+          payee_user_id?: string | null
+          payer_label?: string | null
+          payer_user_id?: string | null
+          reference_code?: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          updated_at?: string
+        }
+        Relationships: []
       }
       onboarding_responses: {
         Row: {
@@ -162,10 +267,13 @@ export type Database = {
         }
         Returns: boolean
       }
+      next_invoice_number: { Args: never; Returns: string }
       redeem_invitation_code: { Args: { _code: string }; Returns: Json }
     }
     Enums: {
       app_role: "employee" | "company" | "provider" | "admin"
+      invoice_kind: "wallet_topup" | "perk_claim" | "provider_payout"
+      invoice_status: "pending" | "sent" | "paid" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -294,6 +402,8 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["employee", "company", "provider", "admin"],
+      invoice_kind: ["wallet_topup", "perk_claim", "provider_payout"],
+      invoice_status: ["pending", "sent", "paid", "cancelled"],
     },
   },
 } as const
