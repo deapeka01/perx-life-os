@@ -32,6 +32,7 @@ import { Route as EmployeeConciergeRouteImport } from './routes/employee.concier
 import { Route as CompanyEmployeesRouteImport } from './routes/company.employees'
 import { Route as CompanyApprovalsRouteImport } from './routes/company.approvals'
 import { Route as CompanyAnalyticsRouteImport } from './routes/company.analytics'
+import { Route as ApiTranscribeRouteImport } from './routes/api/transcribe'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 
 const RedeemRoute = RedeemRouteImport.update({
@@ -149,6 +150,11 @@ const CompanyAnalyticsRoute = CompanyAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => CompanyRoute,
 } as any)
+const ApiTranscribeRoute = ApiTranscribeRouteImport.update({
+  id: '/api/transcribe',
+  path: '/api/transcribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -163,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/provider': typeof ProviderRouteWithChildren
   '/redeem': typeof RedeemRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/transcribe': typeof ApiTranscribeRoute
   '/company/analytics': typeof CompanyAnalyticsRoute
   '/company/approvals': typeof CompanyApprovalsRoute
   '/company/employees': typeof CompanyEmployeesRoute
@@ -186,6 +193,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/redeem': typeof RedeemRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/transcribe': typeof ApiTranscribeRoute
   '/company/analytics': typeof CompanyAnalyticsRoute
   '/company/approvals': typeof CompanyApprovalsRoute
   '/company/employees': typeof CompanyEmployeesRoute
@@ -213,6 +221,7 @@ export interface FileRoutesById {
   '/provider': typeof ProviderRouteWithChildren
   '/redeem': typeof RedeemRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/transcribe': typeof ApiTranscribeRoute
   '/company/analytics': typeof CompanyAnalyticsRoute
   '/company/approvals': typeof CompanyApprovalsRoute
   '/company/employees': typeof CompanyEmployeesRoute
@@ -241,6 +250,7 @@ export interface FileRouteTypes {
     | '/provider'
     | '/redeem'
     | '/api/chat'
+    | '/api/transcribe'
     | '/company/analytics'
     | '/company/approvals'
     | '/company/employees'
@@ -264,6 +274,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/redeem'
     | '/api/chat'
+    | '/api/transcribe'
     | '/company/analytics'
     | '/company/approvals'
     | '/company/employees'
@@ -290,6 +301,7 @@ export interface FileRouteTypes {
     | '/provider'
     | '/redeem'
     | '/api/chat'
+    | '/api/transcribe'
     | '/company/analytics'
     | '/company/approvals'
     | '/company/employees'
@@ -317,6 +329,7 @@ export interface RootRouteChildren {
   ProviderRoute: typeof ProviderRouteWithChildren
   RedeemRoute: typeof RedeemRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiTranscribeRoute: typeof ApiTranscribeRoute
   OnboardingCompanyRoute: typeof OnboardingCompanyRoute
   OnboardingEmployeeRoute: typeof OnboardingEmployeeRoute
   OnboardingProviderRoute: typeof OnboardingProviderRoute
@@ -485,6 +498,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompanyAnalyticsRouteImport
       parentRoute: typeof CompanyRoute
     }
+    '/api/transcribe': {
+      id: '/api/transcribe'
+      path: '/api/transcribe'
+      fullPath: '/api/transcribe'
+      preLoaderRoute: typeof ApiTranscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -560,6 +580,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProviderRoute: ProviderRouteWithChildren,
   RedeemRoute: RedeemRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiTranscribeRoute: ApiTranscribeRoute,
   OnboardingCompanyRoute: OnboardingCompanyRoute,
   OnboardingEmployeeRoute: OnboardingEmployeeRoute,
   OnboardingProviderRoute: OnboardingProviderRoute,
