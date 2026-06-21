@@ -4,10 +4,13 @@ import { DefaultChatTransport, type UIMessage } from "ai";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight, Send } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { toast } from "sonner";
 import { AIOrb } from "@/components/perx/AIOrb";
+import { MicButton } from "@/components/perx/MicButton";
 import { BenefitDnaBuilder } from "@/components/perx/BenefitDnaBuilder";
 import { AGENTS } from "@/lib/agents";
 import { getSession, saveOnboarding } from "@/lib/session";
+
 
 export const Route = createFileRoute("/onboarding/employee")({
   head: () => ({ meta: [{ title: "Welcome to Perx" }] }),
