@@ -6,6 +6,7 @@ import { AIOrb } from "@/components/perx/AIOrb";
 import { AGENTS, type AgentId } from "@/lib/agents";
 import { LanguageSwitcher } from "@/components/perx/LanguageSwitcher";
 import { signOut } from "@/lib/session";
+import { NotificationsBell } from "@/components/perx/NotificationsBell";
 
 export function RoleTopBar({
   agent,
@@ -32,6 +33,7 @@ export function RoleTopBar({
         </Link>
         <div className="flex items-center gap-2">
           {rightExtras}
+          <NotificationsBell />
           <Link
             to="/billing"
             className="hidden h-10 items-center gap-1.5 rounded-full border-2 border-border bg-white px-3 text-xs font-extrabold text-navy shadow-soft transition hover:border-coral hover:text-coral sm:inline-flex"
