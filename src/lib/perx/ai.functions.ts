@@ -142,9 +142,9 @@ export const generateMarketingCampaign = createServerFn({ method: "POST" })
     // Save the 3 channel posts as separate rows
     const baseAnalytics = {};
     const rows = [
-      { channel: "instagram", content: `${out.instagram.caption}\n\n${out.instagram.hashtags.map(h => "#" + h.replace(/^#/, "")).join(" ")}` },
-      { channel: "facebook", content: `${out.facebook.headline}\n\n${out.facebook.body}` },
-      { channel: "linkedin", content: `${out.linkedin.headline}\n\n${out.linkedin.body}` },
+      { channel: "instagram", content: `${out.instagram_caption}\n\n${out.instagram_hashtags.map((h: string) => "#" + h.replace(/^#/, "")).join(" ")}` },
+      { channel: "facebook", content: `${out.facebook_headline}\n\n${out.facebook_body}` },
+      { channel: "linkedin", content: `${out.linkedin_headline}\n\n${out.linkedin_body}` },
     ].map(r => ({
       provider_id: prov.data.id,
       title: out.campaign_title,
