@@ -1,6 +1,22 @@
 // Perx — Albanian-focused mock data for the hackathon MVP
 // Currency: ALL (Albanian Lek)
 
+import coworkingImg from "@/assets/perks/coworking-coffee.jpg";
+import potteryImg from "@/assets/perks/pottery.jpg";
+import paraglidingImg from "@/assets/perks/paragliding.jpg";
+import aiLabImg from "@/assets/perks/ai-lab.jpg";
+import brunchImg from "@/assets/perks/brunch.jpg";
+import rivieraImg from "@/assets/perks/riviera.jpg";
+import dajtiImg from "@/assets/perks/dajti.jpg";
+import thethImg from "@/assets/perks/theth.jpg";
+import jazzImg from "@/assets/perks/jazz.jpg";
+import escapeRoomImg from "@/assets/perks/escape-room.jpg";
+import cookingImg from "@/assets/perks/cooking.jpg";
+import spaImg from "@/assets/perks/spa.jpg";
+import yogaImg from "@/assets/perks/yoga.jpg";
+import dinnerImg from "@/assets/perks/dinner.jpg";
+
+
 export type Role = "employee" | "company" | "provider";
 
 export const currentEmployee = {
@@ -67,6 +83,7 @@ export const perxDrops = [
     title: "Dajti Express VIP",
     desc: "Sunset cable car + a slow dinner at 1,613m.",
     emoji: "🚠",
+    image: dajtiImg,
     endsInSeconds: 4 * 3600 + 22 * 60 + 15,
     spotsLeft: 4,
     accent: "coral" as const,
@@ -76,6 +93,7 @@ export const perxDrops = [
     title: "Theth Sunrise Hike",
     desc: "Tiny group, guided. Saturday only.",
     emoji: "🏔️",
+    image: thethImg,
     endsInSeconds: 38 * 3600,
     spotsLeft: 6,
     accent: "emerald" as const,
@@ -85,6 +103,7 @@ export const perxDrops = [
     title: "Jazz Night · Blloku",
     desc: "Live trio + curated wine pairing.",
     emoji: "🎷",
+    image: jazzImg,
     endsInSeconds: 12 * 3600 + 7 * 60,
     spotsLeft: 9,
     accent: "sky" as const,
@@ -104,6 +123,7 @@ export const discoverFeed = [
     matchScore: 98,
     accent: "sky" as const,
     emoji: "☕",
+    image: coworkingImg,
     story: "Quiet third-place to focus without the office buzz.",
   },
   {
@@ -115,6 +135,7 @@ export const discoverFeed = [
     matchScore: 91,
     accent: "emerald" as const,
     emoji: "🏺",
+    image: potteryImg,
     story: "Two hours making something with your hands. No screens.",
   },
   {
@@ -126,6 +147,7 @@ export const discoverFeed = [
     matchScore: 88,
     accent: "coral" as const,
     emoji: "🪂",
+    image: paraglidingImg,
     story: "Tandem flight as the city turns gold.",
   },
   {
@@ -137,6 +159,7 @@ export const discoverFeed = [
     matchScore: 94,
     accent: "sky" as const,
     emoji: "🤖",
+    image: aiLabImg,
     story: "Three hours, one new skill that compounds at work.",
   },
   {
@@ -148,6 +171,7 @@ export const discoverFeed = [
     matchScore: 89,
     accent: "coral" as const,
     emoji: "🥂",
+    image: brunchImg,
     story: "Slow morning, panoramic view, no rush.",
   },
   {
@@ -159,14 +183,15 @@ export const discoverFeed = [
     matchScore: 86,
     accent: "emerald" as const,
     emoji: "🌊",
+    image: rivieraImg,
     story: "Sea, salt, and a long lunch with feta.",
   },
 ];
 
 export const teamAdventures = [
-  { id: "t1", title: "The Great Escape Room", when: "Friday · 19:00", going: 6, capacity: 8, location: "Tirana" },
-  { id: "t2", title: "Theth Peak Expedition", when: "Sat 12 Oct", going: 4, capacity: 6, location: "Albanian Alps" },
-  { id: "t3", title: "Mediterranean Cooking", when: "Wed · 18:30", going: 5, capacity: 10, location: "Blloku" },
+  { id: "t1", title: "The Great Escape Room", when: "Friday · 19:00", going: 6, capacity: 8, location: "Tirana", image: escapeRoomImg },
+  { id: "t2", title: "Theth Peak Expedition", when: "Sat 12 Oct", going: 4, capacity: 6, location: "Albanian Alps", image: thethImg },
+  { id: "t3", title: "Mediterranean Cooking", when: "Wed · 18:30", going: 5, capacity: 10, location: "Blloku", image: cookingImg },
 ];
 
 export const conciergeStarters = [

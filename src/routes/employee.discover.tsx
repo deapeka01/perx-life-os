@@ -44,16 +44,26 @@ function Discover() {
         className="group mt-8 block overflow-hidden rounded-3xl border-2 border-border bg-card shadow-lift transition hover:-translate-y-1"
       >
         <div className="grid md:grid-cols-[1.2fr_1fr]">
-          <div className={`relative aspect-[5/3] bg-gradient-to-br ${
+          <div className={`relative aspect-[5/3] overflow-hidden bg-gradient-to-br ${
             hero.accent === "coral"
               ? "from-coral/40 via-coral/10 to-transparent"
               : hero.accent === "sky"
                 ? "from-sky/40 via-sky/10 to-transparent"
                 : "from-emerald/40 via-emerald/10 to-transparent"
           } md:aspect-auto`}>
-            <span className="absolute inset-0 grid place-items-center text-8xl" aria-hidden>
-              {hero.emoji}
-            </span>
+            {hero.image ? (
+              <img
+                src={hero.image}
+                alt={hero.title}
+                width={1024}
+                height={640}
+                className="absolute inset-0 size-full object-cover"
+              />
+            ) : (
+              <span className="absolute inset-0 grid place-items-center text-8xl" aria-hidden>
+                {hero.emoji}
+              </span>
+            )}
             <span className="absolute left-4 top-4 inline-flex items-center gap-1 rounded-full bg-navy px-3 py-1.5 text-xs font-extrabold text-white shadow-soft">
               <Sparkles className="size-3.5 text-coral" aria-hidden /> Top pick · {hero.matchScore}% match
             </span>
@@ -106,16 +116,27 @@ function Discover() {
               key={d.id}
               className="group flex h-full flex-col overflow-hidden rounded-3xl border-2 border-border bg-card shadow-soft transition hover:-translate-y-1 hover:border-navy/15 hover:shadow-lift"
             >
-              <div className={`relative aspect-[5/3] bg-gradient-to-br ${
+              <div className={`relative aspect-[5/3] overflow-hidden bg-gradient-to-br ${
                 d.accent === "coral"
                   ? "from-coral/30 via-coral/10 to-transparent"
                   : d.accent === "sky"
                     ? "from-sky/30 via-sky/10 to-transparent"
                     : "from-emerald/30 via-emerald/10 to-transparent"
               }`}>
-                <span className="absolute inset-0 grid place-items-center text-7xl" aria-hidden>
-                  {d.emoji}
-                </span>
+                {d.image ? (
+                  <img
+                    src={d.image}
+                    alt={d.title}
+                    loading="lazy"
+                    width={1024}
+                    height={640}
+                    className="absolute inset-0 size-full object-cover transition duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <span className="absolute inset-0 grid place-items-center text-7xl" aria-hidden>
+                    {d.emoji}
+                  </span>
+                )}
                 <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-navy px-2.5 py-1 text-xs font-extrabold text-white">
                   <Sparkles className="size-3 text-coral" aria-hidden /> {d.matchScore}% match
                 </span>
