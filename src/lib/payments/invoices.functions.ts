@@ -77,8 +77,8 @@ export const createInvoice = createServerFn({ method: "POST" })
         payer_label: data.payer_label ?? null,
         payee_user_id,
         payee_label,
-        bank_snapshot: bank_snapshot as unknown as Record<string, unknown>,
-        metadata: data.metadata ?? {},
+        bank_snapshot: bank_snapshot as never,
+        metadata: (data.metadata ?? {}) as never,
         due_date: new Date(Date.now() + 7 * 86400_000).toISOString().slice(0, 10),
       })
       .select("*")
