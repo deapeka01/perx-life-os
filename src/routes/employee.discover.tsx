@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { PageHeader } from "@/components/perx/PageHeader";
 import { Sparkles, Send, Loader2 } from "lucide-react";
-import { listActiveOffers, requestBenefit } from "@/lib/perx/sim.functions";
+import { listActiveOffers, claimOffer, getMyWallet } from "@/lib/perx/sim.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/employee/discover")({
