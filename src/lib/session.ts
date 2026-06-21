@@ -101,15 +101,17 @@ export async function redeemInvitationCode(code: string): Promise<
 export async function saveOnboarding(payload: Record<string, unknown>) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const json = payload as any;
   const { data: existing } = await supabase
     .from("onboarding_responses")
     .select("id")
     .eq("user_id", user.id)
     .maybeSingle();
   if (existing?.id) {
-    await supabase.from("onboarding_responses").update({ payload }).eq("id", existing.id);
+    await supabase.from("onboarding_responses").update({ payload: json }).eq("id", existing.id);
   } else {
-    await supabase.from("onboarding_responses").insert({ user_id: user.id, payload });
+    await supabase.from("onboarding_responses").insert({ user_id: user.id, payload: json });
   }
   await supabase.from("profiles").update({ onboarded: true }).eq("id", user.id);
 }

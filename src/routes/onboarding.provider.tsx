@@ -1,18 +1,17 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { AgentChat } from "@/components/perx/AgentChat";
-import { getSession, setSession } from "@/lib/session";
+import { saveOnboarding } from "@/lib/session";
 
 export const Route = createFileRoute("/onboarding/provider")({
-  head: () => ({ meta: [{ title: "Set up your studio · Perx" }] }),
+  head: () => ({ meta: [{ title: "Set up your studio. Perx." }] }),
   component: ProviderOnboarding,
 });
 
 function ProviderOnboarding() {
   const navigate = useNavigate();
-  const finish = () => {
-    const s = getSession();
-    if (s) setSession({ ...s, onboarded: true });
+  const finish = async () => {
+    await saveOnboarding({ kind: "provider", capturedAt: new Date().toISOString() });
     navigate({ to: "/provider" });
   };
 
