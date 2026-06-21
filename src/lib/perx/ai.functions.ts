@@ -19,13 +19,13 @@ function gateway() {
 // ─────────────────────── BENEFIT DNA ───────────────────────
 const DnaSchema = z.object({
   primary_archetype: z.string(),
-  secondary_archetype: z.string().nullable().optional(),
+  secondary_archetype: z.string().optional(),
   archetypes: z.array(z.object({
-    trait: z.string(), intensity: z.number().min(0).max(100), emoji: z.string(),
-  })).min(3).max(6),
-  goals: z.array(z.string()).max(5),
-  interests: z.array(z.string()).max(8),
-  recommended_categories: z.array(z.string()).max(6),
+    trait: z.string(), intensity: z.number(), emoji: z.string(),
+  })),
+  goals: z.array(z.string()),
+  interests: z.array(z.string()),
+  recommended_categories: z.array(z.string()),
 });
 
 export const generateBenefitDna = createServerFn({ method: "POST" })
@@ -66,7 +66,7 @@ const ReportSchema = z.object({
     detail: z.string(),
     impact: z.string(),
     action: z.string(),
-  })).min(3).max(5),
+  })),
 });
 
 export const generateStrategyReport = createServerFn({ method: "POST" })
