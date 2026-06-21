@@ -7,6 +7,9 @@ import { Send, Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { AGENTS, type AgentId } from "@/lib/agents";
 import { AIOrb } from "@/components/perx/AIOrb";
+import { MicButton } from "@/components/perx/MicButton";
+import { toast } from "sonner";
+
 
 type Props = {
   agent: AgentId;
