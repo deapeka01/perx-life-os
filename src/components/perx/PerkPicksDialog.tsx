@@ -2,9 +2,9 @@
 // asks the concierge for bundles, suggestions, or things to discover.
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { discoverFeed, formatALL } from "@/lib/mock-data";
-import { Sparkles, Check } from "lucide-react";
+import { Sparkles, Check, Banknote } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
+import { PayByBankDialog, type PayByBankInitial } from "@/components/perx/PayByBankDialog";
 
 type Pick = (typeof discoverFeed)[number];
 
@@ -26,13 +26,20 @@ export function PerkPicksDialog({
   picks: Pick[];
 }) {
   const [claimed, setClaimed] = useState<Set<string>>(new Set());
+  const [payOpen, setPayOpen] = useState(false);
+  const [payInitial, setPayInitial] = useState<PayByBankInitial | null>(null);
 
   const claim = (p: Pick) => {
-    setClaimed((s) => new Set(s).add(p.id));
-    toast.success(`Claimed: ${p.title}`, {
-      description: `${formatALL(p.priceALL)} reserved from your wallet.`,
+    setPayInitial({
+      kind: "perk_claim",
+      amountALL: p.priceALL,
+      description: `Perx perk · ${p.title} (${p.provider})`,
+      payerLabel: "Employee",
+      payeeLabel: "Perx Platform",
     });
+    setPayOpen(true);
   };
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -105,7 +112,9 @@ export function PerkPicksDialog({
                             <Check className="size-4" /> Claimed
                           </>
                         ) : (
-                          <>Claim perk →</>
+                          <>
+                            <Banknote className="size-4" /> Pay & claim
+                          </>
                         )}
                       </button>
                     </div>
@@ -115,6 +124,18 @@ export function PerkPicksDialog({
             })}
           </div>
         </div>
+        <PayByBankDialog
+          open={payOpen}
+          onOpenChange={setPayOpen}
+          initial={payInitial}
+          onPaid={() => {
+            // also mark the picked perk as claimed locally for UX
+            if (payInitial) {
+              const match = picks.find((p) => payInitial.description.includes(p.title));
+              if (match) setClaimed((s) => new Set(s).add(match.id));
+            }
+          }}
+        />
       </DialogContent>
     </Dialog>
   );

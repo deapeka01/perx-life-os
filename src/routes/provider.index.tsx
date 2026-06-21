@@ -1,6 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Package, Radar, Megaphone } from "lucide-react";
+import { ArrowRight, Package, Radar, Megaphone, Banknote } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { AgentChat } from "@/components/perx/AgentChat";
+import { PayByBankDialog, type PayByBankInitial } from "@/components/perx/PayByBankDialog";
+import { listBankAccounts } from "@/lib/payments/invoices.functions";
+import { toast } from "sonner";
 import {
   corporateDemand,
   currentProvider,
@@ -21,6 +26,31 @@ function ProviderHome() {
 }
 
 function SideRail() {
+  const list = useServerFn(listBankAccounts);
+  const [payoutOpen, setPayoutOpen] = useState(false);
+  const [initial, setInitial] = useState<PayByBankInitial | null>(null);
+  const [bankId, setBankId] = useState<string | null>(null);
+
+  useEffect(() => {
+    list().then((rows) => setBankId(rows[0]?.id ?? null)).catch(() => {});
+  }, [list]);
+
+  const openPayout = () => {
+    if (!bankId) {
+      toast.error("Add a payout account first", { description: "Go to Billing → Add payout account." });
+      return;
+    }
+    setInitial({
+      kind: "provider_payout",
+      amountALL: 0,
+      description: `Payout request — ${currentProvider.name}`,
+      bankAccountId: bankId,
+      payerLabel: "Perx Platform",
+      payeeLabel: currentProvider.name,
+    });
+    setPayoutOpen(true);
+  };
+
   return (
     <div className="space-y-4">
       <div className="rounded-3xl border border-white/40 bg-white/70 p-5 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)] backdrop-blur-xl">
@@ -36,7 +66,14 @@ function SideRail() {
           <Stat label="Pending" value={currentProvider.pendingRequests} />
           <Stat label="Companies" value={currentProvider.corporateReach} />
         </div>
+        <button
+          onClick={openPayout}
+          className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-2xl bg-emerald px-4 py-2.5 font-display text-sm font-extrabold text-white shadow-soft transition hover:bg-emerald/90"
+        >
+          <Banknote className="size-4" /> Request payout to my bank
+        </button>
       </div>
+      <PayByBankDialog open={payoutOpen} onOpenChange={setPayoutOpen} initial={initial} />
 
       <div className="rounded-3xl border border-white/40 bg-white/70 p-5 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)] backdrop-blur-xl">
         <div className="flex items-center justify-between">
