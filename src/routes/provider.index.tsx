@@ -1,6 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Package, Radar, Megaphone } from "lucide-react";
+import { ArrowRight, Package, Radar, Megaphone, Banknote } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { AgentChat } from "@/components/perx/AgentChat";
+import { PayByBankDialog, type PayByBankInitial } from "@/components/perx/PayByBankDialog";
+import { listBankAccounts } from "@/lib/payments/invoices.functions";
+import { toast } from "sonner";
 import {
   corporateDemand,
   currentProvider,
