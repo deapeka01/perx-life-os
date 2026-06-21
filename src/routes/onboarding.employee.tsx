@@ -10,6 +10,8 @@ import { MicButton } from "@/components/perx/MicButton";
 import { BenefitDnaBuilder } from "@/components/perx/BenefitDnaBuilder";
 import { AGENTS } from "@/lib/agents";
 import { getSession, saveOnboarding } from "@/lib/session";
+import { useServerFn } from "@tanstack/react-start";
+import { generateBenefitDna } from "@/lib/perx/ai.functions";
 
 
 export const Route = createFileRoute("/onboarding/employee")({
@@ -74,14 +76,19 @@ function EmployeeOnboarding() {
     await sendMessage({ text: t.trim() });
   };
 
+  const genDna = useServerFn(generateBenefitDna);
   const finish = async () => {
-    await saveOnboarding({
-      transcript: messages.map((m) => ({
-        role: m.role,
-        text: m.parts.map((p) => (p.type === "text" ? p.text : "")).join(""),
-      })),
-      capturedAt: new Date().toISOString(),
-    });
+    const transcript = messages.map((m) => ({
+      role: m.role,
+      text: m.parts.map((p) => (p.type === "text" ? p.text : "")).join(""),
+    }));
+    await saveOnboarding({ transcript, capturedAt: new Date().toISOString() });
+    try {
+      await genDna({ data: { transcript } });
+      toast.success("Your Benefit DNA is ready ✨");
+    } catch (e: any) {
+      toast.error(e?.message ?? "DNA generation failed — you can retry later.");
+    }
     navigate({ to: "/employee" });
   };
 
