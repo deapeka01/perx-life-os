@@ -60,11 +60,22 @@ export function PerkPicksDialog({
                   key={p.id}
                   className="flex flex-col overflow-hidden rounded-2xl border-2 border-border bg-card shadow-soft"
                 >
-                  <div className={`relative aspect-[5/3] bg-gradient-to-br ${accentBg[p.accent]}`}>
-                    <span className="absolute inset-0 grid place-items-center text-7xl" aria-hidden>
-                      {p.emoji}
-                    </span>
-                    <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-navy px-2.5 py-1 text-xs font-extrabold text-white">
+                  <div className={`relative aspect-[5/3] overflow-hidden bg-gradient-to-br ${accentBg[p.accent]}`}>
+                    {p.image ? (
+                      <img
+                        src={p.image}
+                        alt={p.title}
+                        loading="lazy"
+                        width={1024}
+                        height={640}
+                        className="absolute inset-0 size-full object-cover"
+                      />
+                    ) : (
+                      <span className="absolute inset-0 grid place-items-center text-7xl" aria-hidden>
+                        {p.emoji}
+                      </span>
+                    )}
+                    <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-navy px-2.5 py-1 text-xs font-extrabold text-white shadow-soft">
                       <Sparkles className="size-3 text-coral" /> {p.matchScore}% match
                     </span>
                   </div>

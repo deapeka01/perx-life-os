@@ -22,7 +22,16 @@ function TeamAdventures() {
             key={t.id}
             className="overflow-hidden rounded-3xl border border-border bg-card shadow-soft transition hover:-translate-y-1 hover:shadow-lift"
           >
-            <div className="aspect-[16/10] bg-gradient-to-br from-coral/30 via-sky/20 to-transparent" />
+            <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-coral/30 via-sky/20 to-transparent">
+              <img
+                src={t.image}
+                alt={t.title}
+                loading="lazy"
+                width={1024}
+                height={640}
+                className="absolute inset-0 size-full object-cover"
+              />
+            </div>
             <div className="space-y-3 p-5">
               <h3 className="font-display text-lg font-extrabold text-navy">{t.title}</h3>
               <div className="flex flex-wrap gap-3 text-xs font-bold text-navy/55">

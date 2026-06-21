@@ -25,6 +25,7 @@ export function PerxDropCard({
   title,
   desc,
   emoji,
+  image,
   endsInSeconds,
   spotsLeft,
   accent = "coral",
@@ -32,6 +33,7 @@ export function PerxDropCard({
   title: string;
   desc: string;
   emoji: string;
+  image?: string;
   endsInSeconds: number;
   spotsLeft: number;
   accent?: Accent;
@@ -39,25 +41,44 @@ export function PerxDropCard({
   const t = tones[accent];
   return (
     <article
-      className={`flex h-full min-w-[280px] flex-col justify-between rounded-3xl border-2 p-5 shadow-soft transition hover:-translate-y-1 hover:shadow-lift sm:min-w-0 ${t.wrap}`}
+      className={`flex h-full min-w-[280px] flex-col overflow-hidden rounded-3xl border-2 shadow-soft transition hover:-translate-y-1 hover:shadow-lift sm:min-w-0 ${t.wrap}`}
     >
-      <div>
-        <div className="flex items-start justify-between gap-3">
-          <span className="text-4xl leading-none" aria-hidden>
-            {emoji}
-          </span>
-          <span className={`rounded-full px-3 py-1 text-xs font-extrabold uppercase tracking-wider ${t.pill}`}>
+      {image && (
+        <div className="relative aspect-[16/9] overflow-hidden">
+          <img
+            src={image}
+            alt={title}
+            loading="lazy"
+            width={1024}
+            height={640}
+            className="absolute inset-0 size-full object-cover"
+          />
+          <span className={`absolute right-3 top-3 rounded-full px-3 py-1 text-xs font-extrabold uppercase tracking-wider shadow-soft ${t.pill}`}>
             Drop · {spotsLeft} left
           </span>
         </div>
-        <h3 className="mt-4 font-display text-xl font-extrabold text-navy">{title}</h3>
-        <p className="mt-1 text-sm font-medium text-navy/70">{desc}</p>
-      </div>
-      <div className="mt-5 flex items-center justify-between gap-3 border-t-2 border-dashed border-navy/10 pt-4">
-        <span className={`inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider ${t.bar}`}>
-          <Clock className="size-3.5" aria-hidden /> Ends in
-        </span>
-        <Countdown seconds={endsInSeconds} compact />
+      )}
+      <div className="flex flex-1 flex-col justify-between p-5">
+        <div>
+          {!image && (
+            <div className="flex items-start justify-between gap-3">
+              <span className="text-4xl leading-none" aria-hidden>
+                {emoji}
+              </span>
+              <span className={`rounded-full px-3 py-1 text-xs font-extrabold uppercase tracking-wider ${t.pill}`}>
+                Drop · {spotsLeft} left
+              </span>
+            </div>
+          )}
+          <h3 className={`font-display text-xl font-extrabold text-navy ${image ? "" : "mt-4"}`}>{title}</h3>
+          <p className="mt-1 text-sm font-medium text-navy/70">{desc}</p>
+        </div>
+        <div className="mt-5 flex items-center justify-between gap-3 border-t-2 border-dashed border-navy/10 pt-4">
+          <span className={`inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider ${t.bar}`}>
+            <Clock className="size-3.5" aria-hidden /> Ends in
+          </span>
+          <Countdown seconds={endsInSeconds} compact />
+        </div>
       </div>
     </article>
   );
