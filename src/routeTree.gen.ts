@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RedeemRouteImport } from './routes/redeem'
 import { Route as ProviderRouteImport } from './routes/provider'
 import { Route as EmployeeRouteImport } from './routes/employee'
 import { Route as CompanyRouteImport } from './routes/company'
@@ -33,6 +34,11 @@ import { Route as CompanyApprovalsRouteImport } from './routes/company.approvals
 import { Route as CompanyAnalyticsRouteImport } from './routes/company.analytics'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 
+const RedeemRoute = RedeemRouteImport.update({
+  id: '/redeem',
+  path: '/redeem',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProviderRoute = ProviderRouteImport.update({
   id: '/provider',
   path: '/provider',
@@ -155,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/company': typeof CompanyRouteWithChildren
   '/employee': typeof EmployeeRouteWithChildren
   '/provider': typeof ProviderRouteWithChildren
+  '/redeem': typeof RedeemRoute
   '/api/chat': typeof ApiChatRoute
   '/company/analytics': typeof CompanyAnalyticsRoute
   '/company/approvals': typeof CompanyApprovalsRoute
@@ -177,6 +184,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/redeem': typeof RedeemRoute
   '/api/chat': typeof ApiChatRoute
   '/company/analytics': typeof CompanyAnalyticsRoute
   '/company/approvals': typeof CompanyApprovalsRoute
@@ -203,6 +211,7 @@ export interface FileRoutesById {
   '/company': typeof CompanyRouteWithChildren
   '/employee': typeof EmployeeRouteWithChildren
   '/provider': typeof ProviderRouteWithChildren
+  '/redeem': typeof RedeemRoute
   '/api/chat': typeof ApiChatRoute
   '/company/analytics': typeof CompanyAnalyticsRoute
   '/company/approvals': typeof CompanyApprovalsRoute
@@ -230,6 +239,7 @@ export interface FileRouteTypes {
     | '/company'
     | '/employee'
     | '/provider'
+    | '/redeem'
     | '/api/chat'
     | '/company/analytics'
     | '/company/approvals'
@@ -252,6 +262,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/redeem'
     | '/api/chat'
     | '/company/analytics'
     | '/company/approvals'
@@ -277,6 +288,7 @@ export interface FileRouteTypes {
     | '/company'
     | '/employee'
     | '/provider'
+    | '/redeem'
     | '/api/chat'
     | '/company/analytics'
     | '/company/approvals'
@@ -303,6 +315,7 @@ export interface RootRouteChildren {
   CompanyRoute: typeof CompanyRouteWithChildren
   EmployeeRoute: typeof EmployeeRouteWithChildren
   ProviderRoute: typeof ProviderRouteWithChildren
+  RedeemRoute: typeof RedeemRoute
   ApiChatRoute: typeof ApiChatRoute
   OnboardingCompanyRoute: typeof OnboardingCompanyRoute
   OnboardingEmployeeRoute: typeof OnboardingEmployeeRoute
@@ -311,6 +324,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/redeem': {
+      id: '/redeem'
+      path: '/redeem'
+      fullPath: '/redeem'
+      preLoaderRoute: typeof RedeemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/provider': {
       id: '/provider'
       path: '/provider'
@@ -538,6 +558,7 @@ const rootRouteChildren: RootRouteChildren = {
   CompanyRoute: CompanyRouteWithChildren,
   EmployeeRoute: EmployeeRouteWithChildren,
   ProviderRoute: ProviderRouteWithChildren,
+  RedeemRoute: RedeemRoute,
   ApiChatRoute: ApiChatRoute,
   OnboardingCompanyRoute: OnboardingCompanyRoute,
   OnboardingEmployeeRoute: OnboardingEmployeeRoute,

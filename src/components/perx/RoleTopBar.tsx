@@ -5,7 +5,7 @@ import { useState, type ReactNode } from "react";
 import { AIOrb } from "@/components/perx/AIOrb";
 import { AGENTS, type AgentId } from "@/lib/agents";
 import { LanguageSwitcher } from "@/components/perx/LanguageSwitcher";
-import { clearSession } from "@/lib/session";
+import { signOut } from "@/lib/session";
 
 export function RoleTopBar({
   agent,
@@ -51,8 +51,8 @@ export function RoleTopBar({
                 role="menu"
               >
                 <button
-                  onClick={() => {
-                    clearSession();
+                  onClick={async () => {
+                    await signOut();
                     navigate({ to: "/" });
                   }}
                   className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-semibold text-navy hover:bg-canvas"

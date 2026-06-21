@@ -7,7 +7,7 @@ import ReactMarkdown from "react-markdown";
 import { AIOrb } from "@/components/perx/AIOrb";
 import { BenefitDnaBuilder } from "@/components/perx/BenefitDnaBuilder";
 import { AGENTS } from "@/lib/agents";
-import { getSession, setSession } from "@/lib/session";
+import { getSession, saveOnboarding } from "@/lib/session";
 
 export const Route = createFileRoute("/onboarding/employee")({
   head: () => ({ meta: [{ title: "Welcome to Perx" }] }),
@@ -33,9 +33,11 @@ function EmployeeOnboarding() {
   useEffect(() => {
     if (seededRef.current) return;
     seededRef.current = true;
-    const s = getSession();
-    const seed = s?.name ? `${SEED} Their name is ${s.name}.` : SEED;
-    void sendMessage({ text: seed });
+    (async () => {
+      const s = await getSession();
+      const seed = s?.name ? `${SEED} Their name is ${s.name}.` : SEED;
+      void sendMessage({ text: seed });
+    })();
   }, [sendMessage]);
 
   useEffect(() => {
@@ -69,9 +71,14 @@ function EmployeeOnboarding() {
     await sendMessage({ text: t.trim() });
   };
 
-  const finish = () => {
-    const s = getSession();
-    if (s) setSession({ ...s, onboarded: true });
+  const finish = async () => {
+    await saveOnboarding({
+      transcript: messages.map((m) => ({
+        role: m.role,
+        text: m.parts.map((p) => (p.type === "text" ? p.text : "")).join(""),
+      })),
+      capturedAt: new Date().toISOString(),
+    });
     navigate({ to: "/employee" });
   };
 
