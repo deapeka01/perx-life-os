@@ -104,10 +104,13 @@ export const generateStrategyReport = createServerFn({ method: "POST" })
 
 // ─────────────────────── MARKETING CAMPAIGN ───────────────────────
 const PostSchema = z.object({
-  instagram: z.object({ caption: z.string(), hashtags: z.array(z.string()), visual_prompt: z.string() }),
-  facebook: z.object({ headline: z.string(), body: z.string() }),
-  linkedin: z.object({ headline: z.string(), body: z.string() }),
   campaign_title: z.string(),
+  instagram_caption: z.string(),
+  instagram_hashtags: z.array(z.string()),
+  facebook_headline: z.string(),
+  facebook_body: z.string(),
+  linkedin_headline: z.string(),
+  linkedin_body: z.string(),
 });
 
 export const generateMarketingCampaign = createServerFn({ method: "POST" })
