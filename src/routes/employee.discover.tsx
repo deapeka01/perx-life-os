@@ -46,9 +46,9 @@ function Discover() {
   return (
     <div className="px-5 pb-12 pt-8 sm:px-8 md:px-10 md:pt-12">
       <PageHeader
-        eyebrow={`${filtered.length} picks${cat !== "All" ? ` · ${cat}` : ""}`}
+        eyebrow={`${filtered.length} picks${cat !== "All" ? ` · ${cat}` : ""}${wallet ? ` · Wallet ${wallet.balance_all.toLocaleString()} ALL` : ""}`}
         title="Discover"
-        subtitle="Tap Request to send a benefit straight to your company for approval. Funds drop into your wallet on approval."
+        subtitle="Tap Claim to spend directly from your wallet. Funds transfer to the provider instantly."
       />
 
       <div className="-mx-5 mt-6 flex gap-2 overflow-x-auto px-5 pb-1 md:-mx-10 md:flex-wrap md:px-10">
