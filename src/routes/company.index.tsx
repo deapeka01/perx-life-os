@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, CheckSquare, Users, BarChart3 } from "lucide-react";
+import { ArrowRight, CheckSquare, Users, BarChart3, Banknote } from "lucide-react";
+import { useState } from "react";
 import { AgentChat } from "@/components/perx/AgentChat";
+import { PayByBankDialog, type PayByBankInitial } from "@/components/perx/PayByBankDialog";
 import {
   currentCompany,
   formatALL,
